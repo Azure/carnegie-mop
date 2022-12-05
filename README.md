@@ -1,33 +1,151 @@
-# Project
+# Model Onboarding Pipeline (MOP) User Guide
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
 
-As the maintainer of this project, please make a few updates:
+> **Note:** This document is a work in progress. Please feel free to contribute to it by submitting a pull request.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+[toc]
 
-## Contributing
+## Overview
+(TBD) This page shows the steps to onboard a model or upload a dataset to the Content Moderation Model Onboarding Pipeline (MOP).   
 
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+A **MODEL** in MOP normally contains all necessary files to run an inference, usually including environment setup configuration, model checkpoints, scripts to load the checkpoint files, and other dependencies.
 
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+A **DATASET** in MOP is a binary classification dataset, including a data file and a label file.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+## Upload a Model
+### Prerequisites
+- An Azure Storage Account.
+### Prepare Your Model
+You should prepare your model checkpoint file(s), dependencies and loading script in a Blob Container as below:
+```
+<Your Model Name>
+│
+└───model               # Required
+│   │   model_ckpt.onnx
+│   │   model_ckpt.pkl
+│   │   ...
+│
+│───privatepkgs         # Optional
+│   │   privatepkg1.whl
+│   │   privatepkg2.whl
+│   │   ...
+│   
+└───scripts
+    │   inference.py        # Required
+    │   requirements.txt    # Required
+    │   setting.yml         # Optional
+```
+There are three folders, each of which contains different types of files that will be used for model evaluation.
+- **model**: This folder contains the model checkpoint files. The model checkpoint files can be in any format. The model checkpoint files will be used to run the model evaluation.
+- **privatepkgs**: This folder contains the private packages that are required to run the model evaluation. The private packages should be in the format of .whl. 
+  The private packages will be installed before running the model evaluation (if it is specified in the requirement.txt).
+- **scripts**: This folder contains the scripts that are required to run the model evaluation. The scripts will be executed to run the model evaluation.
+    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
+  The script should inherit the `BaseModelWrapper` class in `base_model_wrapper.py` and implement the `init`, `inference` and `inference_batch` methods.
+    - **requirements.txt (required)**: This file contains the required packages that are used to run the model evaluation. 
+  The required packages will be installed before running the model evaluation. If required packages are private packages, they should be uploaded in the `privatepkgs` folder.
+    - **setting.yml (optional)**: This file contains the environment setup configuration that is used to run the model evaluation. 
+  The environment setup configuration should be in the format of .yml.
+  It supports following settings:
+      - `dynamicBatch.enable`: Whether to enable dynamic batch. Default is false.
+      - `dynamicBatch.maxBatchSize`: The max batch size. Default is 12.
+      - `dynamicBatch.idleBatchSize`: The idle batch size. Default is 5. It should be less than or equal to `dynamicBatch.maxBatchSize`.
+      - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
 
-## Trademarks
+For detailed information, please check [the model template](http://xxx) and [the sample model](https://xxxx).
 
-This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
-trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
-Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
-Any use of third-party trademarks or logos are subject to those third-party's policies.
+### Grant MOP Access to Your Model
+MOP uses Service Principal for authentication. Users should grant the **Storage Blob Data Reader** role to our system (service principal: **cm-model-onboarding-prod-sp**). 
+See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal) for details.
+
+### Onboard Your Model
+#### Create a Model on MOP
+Go to the MOP portal, click “Models”, fill in information of your model.
+- **Model Name**: The name of your model. It should be unique in MOP. **It cannot be changed after the model is created.**
+- **Model Description**: The description of your model. **It cannot be changed after the model is created.**
+- **Team**: The team that owns the model. **It cannot be changed after the model is created.**
+- **Processor Type**: The processor type of your model. It should be one of the following values:
+  - `CPU only`: The model is running on CPU.
+  - `GPU only`: The model is running on GPU.
+  - `Both`: The model is running on both CPU and GPU.
+- **Model Type**: The model type of your model. It should be one of the following values:
+  - `Blob`: The model is stored in a Azure Blob Container.
+- **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare Your Model section. 
+_For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestModel/_
+- **Version**: The version of your model. It should be unique for this model in MOP.
+- **Model Taxonomy**: All supported taxonomies of the model. **This setting cannot be changed after the model is created.**
+- **Taxonomy Mapping**: The mapping between the system-defined taxonomy and the model output. **This setting cannot be changed after the model is created.**
+![img_6.png](img_6.png)
+
+#### Connect Your Models to One or More Tasks
+Any time after model creation, you can connect your model to one or more tasks. Only models that are connected to a task can be used to evaluated by MOP.
+If you cannot find a proper task, please contact the MOP team and we will help you with it.
+
+#### Update Your Model
+You can update your model by creating a new version of the model. Go to the MOP portal, click “Models”, click the model you want to update, click “Upgrade Version”, fill in information of your model.
+- **Processor Type**: The processor type of your model.
+- **Model Type**: The model type of your model.
+- **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare Your Model section.
+- **Version**: The version of your model. It should be unique for this model in MOP.
+
+## Upload a Dataset
+### Prerequisites
+- An Azure Storage Account.
+### Prepare Your Dataset
+You should prepare your dataset in a Blob Container as below:
+```
+<Your Dataset Name>
+│
+└───data          
+│   │   dataset.csv     # Required
+│
+│───label         
+│   │   label.csv       # Required
+
+```
+For different modalities, we have different format requirements for these files.
+#### Text
+- **dataset.csv**:
+  - Encoded using UTF-8 with no BOM (Byte Order Mark).
+  - Only one column with the header "text".
+  - Each row (except for the header) should be a sample text.
+  - The number of rows in dataset.csv should be the same as label.csv.
+  - Using “,” as delimiter.
+- **label.csv**:
+  - Encoded using UTF-8 with no BOM (Byte Order Mark).
+  - Only one column with the header "label".
+  - Each row (except for the header) should be the corresponding label of the sample in dataset.csv.
+  - The number of rows in dataset.csv should be the same as label.csv.
+  - Using “,” as delimiter.
+  - The label should be one of the following values:
+    - `0`: The sample is negative.
+    - `1`: The sample is positive.
+
+#### Image
+- **dataset.csv**:
+  - Four columns with headers "base64_image", "file_name", "image_width_pixels", "image_height_pixels".
+  - The content of column "base64_image" should be the base64 encoded string of the image.
+  - The content of column " file_name " should include file name extension.
+  - The content of column "image_width_pixels" and "image_height_pixels" should be positive integer.
+  - Each row (except for the header) should be a sample encoded using UTF-8 with no BOM (Byte Order Mark).
+  - The number of rows in dataset.csv should be the same as label.csv.
+  - Using “,” as delimiter.
+- **label.csv**:
+  - Encoded using UTF-8 with no BOM (Byte Order Mark).
+  - Only one column with the header "label".
+  - Each row (except for the header) should be the corresponding label of the sample in dataset.csv.
+  - The number of rows in dataset.csv should be the same as label.csv.
+  - Using “,” as delimiter.
+  - The label should be one of the following values:
+    - `0`: The sample is negative.
+    - `1`: The sample is positive.
+After preparation, users should save these files in a container under a storage account as organized above.
+
+### Grant MOP Access to Your Dataset
+MOP uses Service Principal for authentication. 
+Users should grant the **Storage Blob Data Reader** role to our system (service principal: **cm-model-onboarding-prod-sp**). 
+See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal) for details.
+
+### Onboard Your Dataset
+#### Create a Dataset on MOP
+Go to the MOP portal, click “Evaluation Datasets”, fill in information of your dataset.
