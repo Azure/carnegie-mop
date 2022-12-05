@@ -148,4 +148,19 @@ See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-base
 
 ### Onboard Your Dataset
 #### Create a Dataset on MOP
-Go to the MOP portal, click “Evaluation Datasets”, fill in information of your dataset.
+Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fill in information of your dataset.
+- **Dataset Name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is created.**
+- **Dataset Description**: The description of your dataset. **It cannot be changed after the dataset is created.**
+- **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
+- **Modality**: The modality of your dataset. It should be one of the following values:
+  - `Text`: The dataset is a text dataset.
+- **Source Type**: The source type of your dataset. It should be one of the following values:
+  - `Blob`: The dataset is stored in a Azure Blob Container.
+- **Dataset url**: the url of virtual directory in your container that contains dataset.csv mentioned in Prepare Your Dataset section.
+For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestdata/_
+- **Label url**: the url of virtual directory in your container that contains label.csv mentioned in Prepare Your Dataset section.
+For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestLabel/_
+
+#### Connect Your Dataset to a Task
+Any time after dataset upload, you can connect your dataset to a task. 
+If you cannot find a proper task, please contact the MOP team, and we will help you with it.
