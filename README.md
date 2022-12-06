@@ -40,7 +40,7 @@ There are three folders, each of which contains different types of files that wi
 - **privatepkgs**: This folder contains the private packages that are required to run the model evaluation. The private packages should be in the format of .whl. 
   The private packages will be installed before running the model evaluation (if it is specified in the requirement.txt).
 - **src**: This folder contains the scripts that are required to run the model evaluation. The scripts will be executed to run the model evaluation.
-    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation. Install this package https://pypi.org/project/mop-utils/1.0/ and inherit the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch` methods.
+    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation. Install this package https://pypi.org/project/mop-utils/1.0/ source code can be found [here](https://github.com/Azure/carnegie-mop/tree/main/packages) and inherit the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch` methods.
     - **requirements.txt (required)**: This file contains the required packages that are used to run the model evaluation. 
   The required packages will be installed before running the model evaluation. If required packages are private packages, they should be uploaded in the `privatepkgs` folder.
     - **settings.yml (optional)**: This file contains the environment setup configuration that is used to run the model evaluation. 
