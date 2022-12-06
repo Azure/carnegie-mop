@@ -30,21 +30,20 @@ You should prepare your model checkpoint file(s), dependencies and loading scrip
 │   │   privatepkg2.whl
 │   │   ...
 │   
-└───scripts
+└───src
     │   inference.py        # Required
     │   requirements.txt    # Required
-    │   setting.yml         # Optional
+    │   settings.yml         # Optional
 ```
 There are three folders, each of which contains different types of files that will be used for model evaluation.
 - **model**: This folder contains the model checkpoint files. The model checkpoint files can be in any format. The model checkpoint files will be used to run the model evaluation.
 - **privatepkgs**: This folder contains the private packages that are required to run the model evaluation. The private packages should be in the format of .whl. 
   The private packages will be installed before running the model evaluation (if it is specified in the requirement.txt).
-- **scripts**: This folder contains the scripts that are required to run the model evaluation. The scripts will be executed to run the model evaluation.
-    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
-  The script should inherit the `BaseModelWrapper` class in `base_model_wrapper.py` and implement the `init`, `inference` and `inference_batch` methods.
+- **src**: This folder contains the scripts that are required to run the model evaluation. The scripts will be executed to run the model evaluation.
+    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation. Install this package https://pypi.org/project/mop-utils/1.0/ and inherit the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch` methods.
     - **requirements.txt (required)**: This file contains the required packages that are used to run the model evaluation. 
   The required packages will be installed before running the model evaluation. If required packages are private packages, they should be uploaded in the `privatepkgs` folder.
-    - **setting.yml (optional)**: This file contains the environment setup configuration that is used to run the model evaluation. 
+    - **settings.yml (optional)**: This file contains the environment setup configuration that is used to run the model evaluation. 
   The environment setup configuration should be in the format of .yml.
   It supports following settings:
       - `dynamicBatch.enable`: Whether to enable dynamic batch. Default is false.
