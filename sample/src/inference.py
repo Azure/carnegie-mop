@@ -22,7 +22,7 @@ class ModelWrapper(BaseModelWrapper):
         nltk.download('omw-1.4')
         print(model_root)
         self.model = pickle.load(open(model_root + '/xgboost.pkl', 'rb'))
-        self.tokenizer = dill.load(open(model_root + '/tokenizer.dill', 'rb'))
+        self.tokenizer = pickle.load(open(model_root + '/tokenizer.pkl', 'rb'))
 
     @staticmethod
     def __convert__inference_output(model_output):
