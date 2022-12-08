@@ -5,5 +5,5 @@ nltk==3.7
 inference-schema[numpy-support]==1.3.0
 joblib==1.2.0
 xgboost==1.7.1
-mop-utils==1.0
+mop-utils==1.2
 dill==0.3.6

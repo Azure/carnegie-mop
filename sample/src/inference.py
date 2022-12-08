@@ -27,20 +27,17 @@ class ModelWrapper(BaseModelWrapper):
     @staticmethod
     def __convert__inference_output(model_output):
         inference_output = InferenceOutput()
-        inference_output.confidence_score = {"identity_hate": model_output}
+        inference_output.confidence_scores = {"identity_hate": model_output}
         inference_output.predicted_labels = {"identity_hate": model_output > 0.5}
         return inference_output
 
     def inference(self, item: InferenceInput) -> InferenceOutput:
-        print(item.text)
         features = self.tokenizer.transform([item.text])
         score = self.model.predict_proba(features)[0][1]
         return self.__convert__inference_output(score)
 
     def inference_batch(self, items: List[InferenceInput]) -> List[InferenceOutput]:
-        print(items)
         features = self.tokenizer.transform([x.text for x in items])
-        print(features)
         predicts = self.model.predict_proba(features)
         scores = [x[1] for x in predicts]
         print(scores)

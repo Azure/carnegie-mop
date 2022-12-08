@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Any
 
 
@@ -56,12 +57,12 @@ class InferenceInput:
 
 
 class InferenceOutput:
-    def __init__(self, confidence_score: Optional[Dict] = None, predicted_labels: Optional[Dict] = None) -> None:
-        self.__confidence_score__: Dict = confidence_score
+    def __init__(self, confidence_scores: Optional[Dict] = None, predicted_labels: Optional[Dict] = None) -> None:
+        self.__confidence_scores__: Dict = confidence_scores
         self.__predicted_labels__: Dict = predicted_labels
 
     def from_dict(self, output_dict: dict) -> Any:
-        self.__confidence_score__ = output_dict.get('confidence_score', None)
+        self.__confidence_scores__ = output_dict.get('confidence_scores', None)
         self.__predicted_labels__ = output_dict.get('predicted_labels', None)
         return self
 
@@ -72,12 +73,12 @@ class InferenceOutput:
         return self.__str__()
 
     @property
-    def confidence_score(self) -> Dict:
-        return self.__confidence_score__
+    def confidence_scores(self) -> Dict:
+        return self.__confidence_scores__
 
-    @confidence_score.setter
-    def confidence_score(self, confidence_score: Dict) -> None:
-        self.__confidence_score__ = confidence_score
+    @confidence_scores.setter
+    def confidence_scores(self, confidence_scores: Dict) -> None:
+        self.__confidence_scores__ = confidence_scores
 
     @property
     def predicted_labels(self) -> Dict:
@@ -89,18 +90,21 @@ class InferenceOutput:
 
     @property
     def output(self) -> Dict:
-        return {'confidence_score': self.confidence_score, 'predicted_labels': self.predicted_labels}
+        return {'confidence_scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
 
 
-class BaseModelWrapper:
+class BaseModelWrapper(ABC):
     def __init__(self) -> None:
         pass
 
-    def init(self, model_root: str) -> None:
-        raise NotImplementedError("Should have implemented this")
+    @abstractmethod
+    def init(self, model_root: str):
+        raise NotImplementedError("init() method is not implemented")
 
+    @abstractmethod
     def inference(self, items: InferenceInput) -> InferenceOutput:
-        raise NotImplementedError("Should have implemented this")
+        raise NotImplementedError("inference() method is not implemented")
 
+    @abstractmethod
     def inference_batch(self, items: List[InferenceInput]) -> List[InferenceOutput]:
-        raise NotImplementedError("Should have implemented this")
+        raise NotImplementedError("inference_batch() method is not implemented")
