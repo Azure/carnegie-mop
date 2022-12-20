@@ -2,7 +2,7 @@ import re
 import pickle
 import re
 import string
-from typing import List
+from typing import List, Optional
 import dill
 from nltk.stem.wordnet import WordNetLemmatizer
 import nltk
@@ -36,11 +36,10 @@ class ModelWrapper(BaseModelWrapper):
         score = self.model.predict_proba(features)[0][1]
         return self.__convert__inference_output(score)
 
-    def inference_batch(self, items: List[InferenceInput]) -> List[InferenceOutput]:
+    def inference_batch(self, items: List[InferenceInput], batch_size: Optional[int] = None) -> List[InferenceOutput]:
         features = self.tokenizer.transform([x.text for x in items])
         predicts = self.model.predict_proba(features)
         scores = [x[1] for x in predicts]
-        print(scores)
         return [self.__convert__inference_output(x) for x in scores]
 
 

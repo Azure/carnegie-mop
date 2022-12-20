@@ -11,10 +11,12 @@ class InferenceInput:
         self.__height__ = height
 
     def from_dict(self, input_dict: Dict) -> Any:
-        self.__text__ = input_dict.get('text')
-        self.__image__ = input_dict.get('image')
-        self.__width__ = input_dict.get('width')
-        self.__height__ = input_dict.get('height')
+        self.__text__ = input_dict.get('text', None)
+        self.__image__ = input_dict.get('image', None)
+        self.__width__ = input_dict.get('width', None)
+        self.__height__ = input_dict.get('height', None)
+        if self.__text__ is None and self.__image__ is None:
+            raise ValueError('Either text or image must be provided')
         return self
 
     def __str__(self) -> str:
@@ -62,8 +64,8 @@ class InferenceOutput:
         self.__predicted_labels__: Dict = predicted_labels
 
     def from_dict(self, output_dict: dict) -> Any:
-        self.__confidence_scores__ = output_dict.get('confidence_scores', None)
-        self.__predicted_labels__ = output_dict.get('predicted_labels', None)
+        self.__confidence_scores__ = output_dict['confidence_scores']
+        self.__predicted_labels__ = output_dict['predicted_labels']
         return self
 
     def __str__(self) -> str:
@@ -102,9 +104,9 @@ class BaseModelWrapper(ABC):
         raise NotImplementedError("init() method is not implemented")
 
     @abstractmethod
-    def inference(self, items: InferenceInput) -> InferenceOutput:
+    def inference(self, item: InferenceInput) -> InferenceOutput:
         raise NotImplementedError("inference() method is not implemented")
 
     @abstractmethod
-    def inference_batch(self, items: List[InferenceInput]) -> List[InferenceOutput]:
+    def inference_batch(self, items: List[InferenceInput], batch_size: Optional[int] = None) -> List[InferenceOutput]:
         raise NotImplementedError("inference_batch() method is not implemented")
