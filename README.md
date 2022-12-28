@@ -33,7 +33,7 @@ You should prepare your model checkpoint file(s), dependencies and loading scrip
 └───src
     │   inference.py        # Required
     │   requirements.txt    # Required
-    │   settings.yml         # Optional
+    │   settings.yml        # Required
 ```
 There are three folders, each of which contains different types of files that will be used for model evaluation.
 - **model**: This folder contains the model checkpoint files. The model checkpoint files can be in any format. The model checkpoint files will be used to run the model evaluation.
