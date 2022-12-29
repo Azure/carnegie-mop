@@ -100,13 +100,13 @@ class BaseModelWrapper(ABC):
         pass
 
     @abstractmethod
-    def init(self, model_root: str):
+    def init(self, model_root: str, **kwargs):
         raise NotImplementedError("init() method is not implemented")
 
     @abstractmethod
-    def inference(self, item: InferenceInput) -> InferenceOutput:
+    def inference(self, item: InferenceInput, **kwargs) -> InferenceOutput:
         raise NotImplementedError("inference() method is not implemented")
 
     @abstractmethod
-    def inference_batch(self, items: List[InferenceInput], batch_size: Optional[int] = None) -> List[InferenceOutput]:
+    def inference_batch(self, items: List[InferenceInput], **kwargs) -> List[InferenceOutput]:
         raise NotImplementedError("inference_batch() method is not implemented")
