@@ -17,7 +17,7 @@ class ModelWrapper(BaseModelWrapper):
         self.model = None
         self.tokenizer = None
 
-    def init(self, model_root: str) -> None:
+    def init(self, model_root: str, **kwargs) -> None:
         nltk.download('wordnet')
         nltk.download('omw-1.4')
         print(model_root)
@@ -31,12 +31,12 @@ class ModelWrapper(BaseModelWrapper):
         inference_output.predicted_labels = {"identity_hate": model_output > 0.5}
         return inference_output
 
-    def inference(self, item: InferenceInput) -> InferenceOutput:
+    def inference(self, item: InferenceInput, **kwargs) -> InferenceOutput:
         features = self.tokenizer.transform([item.text])
         score = self.model.predict_proba(features)[0][1]
         return self.__convert__inference_output(score)
 
-    def inference_batch(self, items: List[InferenceInput], batch_size: Optional[int] = None) -> List[InferenceOutput]:
+    def inference_batch(self, items: List[InferenceInput], **kwargs) -> List[InferenceOutput]:
         features = self.tokenizer.transform([x.text for x in items])
         predicts = self.model.predict_proba(features)
         scores = [x[1] for x in predicts]
