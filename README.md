@@ -78,6 +78,14 @@ _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer
 - **Taxonomy Mapping**: The mapping between the system-defined taxonomy and the model output. **This setting cannot be changed after the model is created.**
 ![img_6.png](img_6.png)
 
+#### TSG For Onboarding Model
+1. Verify the requirments.txt locally using Conda
+    - Make sure [Conda](https://conda.io/projects/conda/en/stable/user-guide/install/download.html) is downloaded.
+    - Put [tool](verify_conda.bat) on your local directory where `src` and `privatepkgs` folder is put.
+    - On windows, in the directory where `verify_conda.bat` located, run `./verify_conda.bat environment=<envrionment-name> python=<version>`, for example, `./verify_conda.bat mop-env 3.9`
+    - If you encounter error, you need to fix packages in `requirements.txt` according. For example, there might be some package confliction.
+2. Run `inference.py` locally on the environment you created.
+
 #### Connect Your Models to One or More Tasks
 Any time after model creation, you can connect your model to one or more tasks. Only models that are connected to a task can be used to evaluated by MOP.
 If you cannot find a proper task, please contact the MOP team and we will help you with it.
