@@ -52,6 +52,9 @@ There are three folders, each of which contains different types of files that wi
 
 For detailed information, please check [the model template](http://xxx) and [the sample model](https://xxxx).
 
+### Online Running Environment
+In MOP, the running environment is ubuntu20.04. CUDA Toolkit is cuda11.6-cudnn8
+
 ### Grant MOP Access to Your Model
 MOP uses Service Principal for authentication. Users should grant the **Storage Blob Data Reader** role to our system (service principal: **cm-model-onboarding-prod-sp**). 
 See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal) for details.
