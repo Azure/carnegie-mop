@@ -3,7 +3,6 @@
 
 > **Note:** This document is a work in progress. Please feel free to contribute to it by submitting a pull request.
 
-[toc]
 
 ## Overview
 (TBD) This page shows the steps to onboard a model or upload a dataset to the Content Moderation Model Onboarding Pipeline (MOP).   
@@ -173,3 +172,38 @@ For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer
 #### Connect Your Dataset to a Task
 Any time after dataset upload, you can connect your dataset to a task. 
 If you cannot find a proper task, please contact the MOP team, and we will help you with it.
+
+## Q & A
+### Q: How to calculate the average rank percentile of a metric?
+A: For a version of a model (i.e. a model revision), MOP will evaluate it on all the datasets connected to a task. 
+There might be multiple models (and different versions) that are connected to the same task.
+
+The average rank percentile of a metric for a model version is calculated as below (we use f1_score as an example):
+1. For all model revisions and all datasets that are connected to the task, calculate the f1_score for each model revision on each dataset.
+2. Rank the f1_score of each model revision on each dataset from high to low.
+3. For a model revision, the average rank percentile of f1_score is the average of the rank percentile of f1_score on all datasets.
+
+For example, if there are 3 datasets (D1, D2, D3), and each dataset has 3 model revisions (M1, M2, M3), and the f1_score of each model revision on each dataset is as below:
+```
+M1 on D1: 0.90   M1 on D2: 0.92   M1 on D3: 0.91
+M2 on D1: 0.91   M2 on D2: 0.73   M2 on D3: 0.93
+M3 on D1: 0.90   M3 on D2: 0.89   M3 on D3: 0.88
+```
+Now we can calculate the average rank percentile of f1_score for M1:
+
+On dataset D1, M1 has the second highest f1_score (out of 3 model revisions), so the rank percentile D1 is 2/3 = 0.67;
+
+On dataset D2, M1 has the highest f1_score (out of 3 model revisions), so the rank percentile D2 is 1/3 = 0.33;
+
+On dataset D3, M1 has the second highest f1_score (out of 3 model revisions), so the rank percentile D3 is 2/3 = 0.67;
+
+The average rank percentile of f1_score for M1 is (0.67 + 0.33 + 0.67) / 3 = 55%.
+
+### Q: How to do the load test?
+A: MOP deploys verified model as a service (on a single machine), and MOP will use http client to send requests to the service. 
+MOP will gradually increase the number of clients, and each client will send a new request to the service as soon as it 
+received the response of the previous request.
+
+User failed means MOP get 4xx error code when doing load test. Usually it refers to 429 Too Many Request.
+
+System Failed means MOP get 5xx error code when doing load test.
