@@ -87,7 +87,8 @@ _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer
 
 #### Connect Your Models to One or More Tasks
 Any time after model creation, you can connect your model to one or more tasks. Only models that are connected to a task can be used to evaluated by MOP.
-If you cannot find a proper task, please contact the MOP team and we will help you with it.
+If you cannot find a proper task, please contact the MOP team via **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
+and we will help you with it.
 
 #### Update Your Model
 You can update your model by creating a new version of the model. Go to the MOP portal, click “Models”, click the model you want to update, click “Upgrade Version”, fill in information of your model.
@@ -171,7 +172,9 @@ For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer
 
 #### Connect Your Dataset to a Task
 Any time after dataset upload, you can connect your dataset to a task. 
-If you cannot find a proper task, please contact the MOP team, and we will help you with it.
+If you cannot find a proper task, please contact the MOP team via 
+**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**,
+and we will help you with it.
 
 ## Q & A
 ### Q: How to calculate the average rank percentile of a metric?
@@ -207,3 +210,16 @@ received the response of the previous request.
 User failed means MOP get 4xx error code when doing load test. Usually it refers to 429 Too Many Request.
 
 System Failed means MOP get 5xx error code when doing load test.
+
+
+### Q: Why I cannot see the evaluation results?
+We have access control for evaluation results on each dataset for a model. By default, only model owner can see them. 
+
+If you are not 
+the owner of the model, you can ask the model owner to publish these results so that others can see them on MOP.
+
+A model owner can go to `Models -> Your Model -> Evaluation by datasets`, choose the results that you want to publish, 
+and select `Public evaluation result` to publish them.
+
+If you are the model owner, and you cannot see the expected evaluation results, please contact us via 
+**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
