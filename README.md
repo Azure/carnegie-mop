@@ -4,7 +4,7 @@
 
 ## Overview
 
-(TBD) This page shows the steps to onboard a model or upload a dataset to the Content Moderation Model Onboarding
+This page shows the steps to onboard a model or upload a dataset to the Content Moderation Model Onboarding
 Pipeline (MOP).
 
 A **MODEL** in MOP normally contains all necessary files to run an inference, usually including environment setup
