@@ -3,7 +3,8 @@ from typing import List, Dict, Optional, Any
 
 
 class InferenceInput:
-    def __init__(self, text: Optional[str] = None, image: Optional[str] = None, width: Optional[int] = None,
+    def __init__(self, text: Optional[str] = None, image: Optional[str] = None,
+                 width: Optional[int] = None,
                  height: Optional[int] = None) -> None:
         self.__text__ = text
         self.__image__ = image
@@ -104,9 +105,17 @@ class BaseModelWrapper(ABC):
         raise NotImplementedError("init() method is not implemented")
 
     @abstractmethod
-    def inference(self, item: InferenceInput, **kwargs) -> InferenceOutput:
+    def inference(self, item: str, **kwargs) -> str:
         raise NotImplementedError("inference() method is not implemented")
 
     @abstractmethod
-    def inference_batch(self, items: List[InferenceInput], **kwargs) -> List[InferenceOutput]:
-        raise NotImplementedError("inference_batch() method is not implemented")
+    def inference_batch(self, item: List[str], **kwargs) -> List[str]:
+        raise NotImplementedError("inference() method is not implemented")
+
+    @abstractmethod
+    def convert_mop_input_to_customized_input(self, mop_input: InferenceInput, **kwargs) -> str:
+        raise NotImplementedError("convert_mop_input_to_customized_input() method is not implemented")
+
+    @abstractmethod
+    def convert_customized_output_to_mop_output(self, customized_output: str, **kwargs) -> InferenceOutput:
+        raise NotImplementedError("convert_customized_output_to_mop_output() method is not implemented")
