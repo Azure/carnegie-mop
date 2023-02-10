@@ -1,1 +1,1 @@
-from .base_model_wrapper import BaseModelWrapper, InferenceInput, InferenceOutput
+from .base_model_wrapper import BaseModelWrapper, MopInferenceInput, MopInferenceOutput
