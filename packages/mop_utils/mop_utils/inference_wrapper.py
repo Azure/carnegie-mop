@@ -7,8 +7,8 @@ from typing import Any, Dict, List, Optional
 import yaml
 from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
-from base_model_wrapper import BaseModelWrapper, MopInferenceInput
-from constant import CM_MODEL_WRAPPER_NAME, DYNAMIC_SETTINGS_YAML
+from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput
+from mop_utils.constant import CM_MODEL_WRAPPER_NAME, DYNAMIC_SETTINGS_YAML
 
 try:
     inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
