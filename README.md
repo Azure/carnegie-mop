@@ -322,5 +322,5 @@ and select `Public evaluation result` to publish them.
 If you are the model owner, and you cannot see the expected evaluation results, please contact us via
 **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
 
-### Q: Why do I failed to install mop-utils package?
+### Q: Why do I fail to install mop-utils package?
 The package mop-utils depends on python which version is no lower than than 3.8.
