@@ -100,7 +100,7 @@ class MopInferenceOutput:
         return {'confidence_scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
 
 
-class InferenceOutput(MopInferenceInput):
+class InferenceOutput(MopInferenceOutput):
     '''this is a subclass to be compatible with old version'''
 
 
@@ -113,17 +113,17 @@ class BaseModelWrapper(ABC):
         raise NotImplementedError("init() method is not implemented")
 
     @abstractmethod
-    def inference(self, item: dict, **kwargs) -> dict:
+    def inference(self, item: Dict, **kwargs) -> Dict:
         raise NotImplementedError("inference() method is not implemented")
 
     @abstractmethod
-    def inference_batch(self, item: List[dict], **kwargs) -> List[dict]:
+    def inference_batch(self, item: List[Dict], **kwargs) -> List[Dict]:
         raise NotImplementedError("inference_batch() method is not implemented")
 
     @abstractmethod
-    def convert_mop_input_to_customized_input(self, mop_input: MopInferenceInput, **kwargs) -> dict:
+    def convert_mop_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
         raise NotImplementedError("convert_mop_input_to_customized_input() method is not implemented")
 
     @abstractmethod
-    def convert_customized_output_to_mop_output(self, customized_output: dict, **kwargs) -> MopInferenceOutput:
+    def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_customized_output_to_mop_output() method is not implemented")

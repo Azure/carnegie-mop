@@ -2,6 +2,7 @@ import importlib
 import json
 import logging
 import os
+import numpy as np
 from typing import Any, Dict, List, Optional
 
 import yaml
@@ -29,30 +30,38 @@ class MOPInferenceWrapper:
         self.model_wrapper.init(model_root)
 
     def run(self, item: Dict, triggered_by_mop: False) -> Dict:
+        print(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
+        logging.info(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
-            customized_output = self.model_wrapper.inference(item)
-            return [customized_output]
+            model_output = self.model_wrapper.inference(item)
+            return [model_output]
         else:
-            if isinstance(item, dict):
-                mop_input = MopInferenceInput().from_dict(item)
-                customized_input = self.model_wrapper.convert_mop_input_to_customized_input(mop_input)
-                customized_output = self.model_wrapper.inference(customized_input)
-                mop_output = self.model_wrapper.convert_customized_output_to_mop_output(customized_output)
-                return mop_output.output
+            mop_input = MopInferenceInput().from_dict(item)
+            model_input = self.model_wrapper.convert_mop_input_to_model_input(mop_input)
+            logging.info(f"Converted model input is {model_input}")
+            model_output = self.model_wrapper.inference(model_input)
+            logging.info(f"Inference model output is {model_output}")
+            mop_output = self.model_wrapper.convert_model_output_to_mop_output(model_output)
+            
+            return mop_output.output
 
     def run_batch(self, items: List[dict], triggered_by_mop: False) -> List[dict]:
+        print(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
+        logging.info(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
-            customized_outputs = self.model_wrapper.inference_batch(items)
-            return customized_outputs
+            model_outputs = self.model_wrapper.inference_batch(items)
+            return model_outputs
         else:
-            customized_inputs = [
-                self.model_wrapper.convert_mop_input_to_customized_input(MopInferenceInput().from_dict(item)) for item
+            model_inputs = [
+                self.model_wrapper.convert_mop_input_to_model_input(MopInferenceInput().from_dict(item)) for item
                 in
                 items]
 
-            customized_outputs = self.model_wrapper.inference_batch(customized_inputs)
-            mop_outputs = [self.model_wrapper.convert_customized_output_to_mop_output(customized_output).output for
-                           customized_output in customized_outputs]
+            logging.info(f"Converted model inputs is {model_inputs}")
+            model_outputs = self.model_wrapper.inference_batch(model_inputs)
+            logging.info(f"Inference batch model outputs is {model_outputs}")
+            mop_outputs = [self.model_wrapper.convert_model_output_to_mop_output(model_output).output for
+                           model_output in model_outputs]
             return mop_outputs
 
 
@@ -110,10 +119,10 @@ class NumpyJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def mop_init():
+def mop_init(model_root):
     global batch_model
     global batch_size
-    inference_wrapper.init(os.path.join(os.getenv("AZUREML_MODEL_DIR"), "../model"))
+    inference_wrapper.init(model_root)
 
     # assign batch_model is enabled
     dynamic_batch_args = _get_dynamic_batch_args()
@@ -141,16 +150,17 @@ def build_response(inference_result: any) -> any:
         return json.loads(output_str)
     if isinstance(inference_result, list):
         res = [item.__dict__ if hasattr(inference_result, '__dict__') else item for item in inference_result]
-        output_str = json.dumps(res)
+        output_str = json.dumps(res,  cls=NumpyJsonEncoder)
         return json.loads(output_str)
     if hasattr(inference_result, '__dict__'):
-        output_str = json.dumps(inference_result.__dict__)
+        output_str = json.dumps(inference_result.__dict__, cls=NumpyJsonEncoder)
         return json.loads(output_str)
     return inference_result
 
 
 if __name__ == "__main__":
-    mop_init()
+    model_root = "D:\code\carnegie-mop\sample\model"
+    mop_init(model_root)
     data_dict = {"data": "354"}
     res = mop_run(data_dict, False)
     print(res)
