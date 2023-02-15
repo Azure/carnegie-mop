@@ -148,7 +148,7 @@ you want to update, click “Upgrade Version”, fill in information of your mod
 You should prepare your dataset in a Blob Container as below:
 
 ```
-<Your Dataset Name>
+<Your Dataset Folder Name>
 │
 └───data          
 │   │   dataset.csv     # Required
