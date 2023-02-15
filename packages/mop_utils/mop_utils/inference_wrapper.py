@@ -2,14 +2,13 @@ import importlib
 import json
 import logging
 import os
-import numpy as np
 from typing import Any, Dict, List, Optional
 
+import numpy as np
 import yaml
-from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
-
 from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput
 from mop_utils.constant import CM_MODEL_WRAPPER_NAME, DYNAMIC_SETTINGS_YAML
+from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
 try:
     inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
@@ -42,7 +41,7 @@ class MOPInferenceWrapper:
             model_output = self.model_wrapper.inference(model_input)
             logging.info(f"Inference model output is {model_output}")
             mop_output = self.model_wrapper.convert_model_output_to_mop_output(model_output)
-            
+
             return mop_output.output
 
     def run_batch(self, items: List[dict], triggered_by_mop: False) -> List[dict]:
@@ -150,7 +149,7 @@ def build_response(inference_result: any) -> any:
         return json.loads(output_str)
     if isinstance(inference_result, list):
         res = [item.__dict__ if hasattr(inference_result, '__dict__') else item for item in inference_result]
-        output_str = json.dumps(res,  cls=NumpyJsonEncoder)
+        output_str = json.dumps(res, cls=NumpyJsonEncoder)
         return json.loads(output_str)
     if hasattr(inference_result, '__dict__'):
         output_str = json.dumps(inference_result.__dict__, cls=NumpyJsonEncoder)

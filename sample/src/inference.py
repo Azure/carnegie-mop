@@ -3,13 +3,8 @@ import pickle
 from typing import List, Dict
 
 import nltk
-
-
-
 from mop_utils.base_model_wrapper import BaseModelWrapper, InferenceInput, InferenceOutput
 
-
-# from base_model_wrapper import  BaseModelWrapper, InferenceInput, InferenceOutput
 
 class ModelWrapper(BaseModelWrapper):
     def __init__(self) -> None:
@@ -27,18 +22,17 @@ class ModelWrapper(BaseModelWrapper):
     def inference(self, item: Dict) -> Dict:
         features = self.tokenizer.transform([item.get('data')])
         score = self.model.predict_proba(features)[0][1]
-        # score = 0.9
-        return score
+        return {'score': score}
 
     def inference_batch(self, items: List[Dict]) -> List[Dict]:
         print(f'in inference batch, {items}')
         features = self.tokenizer.transform([x.get('data') for x in items])
         predicts = self.model.predict_proba(features)
-        scores = [x[1] for x in predicts]
+        scores = [{'score': x[1]} for x in predicts]
         return scores
 
     def convert_mop_input_to_model_input(self, mop_input: InferenceInput, **kwargs) -> Dict:
-        return  {"data": mop_input.text}
+        return {"data": mop_input.text}
 
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> InferenceOutput:
         inference_output = InferenceOutput()
@@ -61,4 +55,3 @@ if __name__ == "__main__":
 
     mop_output = model_wrapper.convert_customized_output_to_mop_output(c_output)
     print(mop_output)
-
