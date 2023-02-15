@@ -23,7 +23,7 @@ A **DATASET** in MOP is a binary classification dataset, including a data file a
 You should prepare your model checkpoint file(s), dependencies and loading script in a Blob Container as below:
 
 ```
-<Your Model Name>
+<Your Model Folder Name>
 │
 └───model               # Required
 │   │   model_ckpt.onnx
