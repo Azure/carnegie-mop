@@ -118,6 +118,16 @@ Go to the MOP portal, click “Models”, fill in information of your model.
       package confliction.
 2. Run `inference.py` locally on the environment you created.
 
+#### Model Onboarding state
+
+There are several state for the model onboarding process.
+- **created**: The model onboarding task is ready to be triggered. The next state is dataDownloaded. If the final state is verifyFailed, we will retry the logic, so the created state will show again.
+- **dataDownloaded**: The data on blob is downloaded successfully. The expected next state is endpointCreating. This process may take 1 - 30 minutes, depending on the file size and distance between the blob and our server.
+- **endpointCreating**: The endpoint in the backend is creating. The expected next state is deploymentCreating. This process may take no more than 10 minutes.
+- **deploymentCreating**: The deployment is creating in the backend. This process may take 10 to no more than 2 hours. Generally, it take around 10-15 minutes.
+- **verified**: This status show that the model you onboard is deployed successfully in the backend.
+- **verifyFailed**: This status show that the model you onboard is not deployed successfuly in the backend. For the failed reason, you could click on the **details** button.
+
 #### Connect Your Models to One or More Tasks
 
 Any time after model creation, you can connect your model to one or more tasks. Only models that are connected to a task
