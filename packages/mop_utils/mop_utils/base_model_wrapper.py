@@ -122,8 +122,8 @@ class BaseModelWrapper(ABC):
 
     @abstractmethod
     def convert_mop_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
-        raise NotImplementedError("convert_mop_input_to_customized_input() method is not implemented")
+        raise NotImplementedError("convert_mop_input_to_model_input() method is not implemented")
 
     @abstractmethod
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
-        raise NotImplementedError("convert_customized_output_to_mop_output() method is not implemented")
+        raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")

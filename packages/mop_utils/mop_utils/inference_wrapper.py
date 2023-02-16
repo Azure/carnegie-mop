@@ -118,6 +118,16 @@ class NumpyJsonEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
+"""
+This is init function.
+
+Parameters:
+    model_root - root where the model file exists
+
+Returns:
+    None
+"""
+
 def mop_init(model_root):
     global batch_model
     global batch_size
@@ -130,7 +140,19 @@ def mop_init(model_root):
         batch_size = dynamic_batch_args.get('max_batch_size')
 
 
-def mop_run(raw_data: any, triggered_by_mop) -> any:
+"""
+This is run function.
+
+Parameters:
+    raw_data - row input data to do inference
+    triggered_by_mop - whether the function is triggered by mop
+    **kwargs - dynamic parameter 
+    
+Returns:
+    inference result
+    
+"""
+def mop_run(raw_data: any, triggered_by_mop, **kwargs) -> any:
     if batch_model is not None:
         inference_result = batch_model.predict(raw_data, triggered_by_mop if isinstance(raw_data, list) else [raw_data])
         return inference_result
