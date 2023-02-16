@@ -96,6 +96,11 @@ Go to the MOP portal, click “Models”, fill in information of your model.
     - `Both`: The model is running on both CPU and GPU.
 - **Model Type**: The model type of your model. It should be one of the following values:
     - `Blob`: The model is stored in a Azure Blob Container.
+- **Model Config** : The detailed configuration for your models, for example the dynamic batch information.
+    - `dynamicBatch.maxBatchSize`: The max batch size. Default is 12.
+    - `dynamicBatch.idleBatchSize`: The idle batch size. Default is 5. It should be less than or equal
+      to `dynamicBatch.maxBatchSize`.
+    - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
 - **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare
   Your Model section.
   _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestModel/_
