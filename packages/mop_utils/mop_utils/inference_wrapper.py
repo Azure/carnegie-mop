@@ -1,13 +1,11 @@
 import importlib
 import json
 import logging
-import os
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-import yaml
 from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput
-from mop_utils.constant import CM_MODEL_WRAPPER_NAME, DYNAMIC_SETTINGS_YAML
+from mop_utils.constant import CM_MODEL_WRAPPER_NAME
 from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
 try:
@@ -28,7 +26,7 @@ class MOPInferenceWrapper:
     def init(self, model_root: str) -> None:
         self.model_wrapper.init(model_root)
 
-    def run(self, item: Dict, triggered_by_mop: False) -> Dict:
+    def run(self, item: Dict, triggered_by_mop) -> Dict:
         print(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
         logging.info(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
@@ -44,7 +42,7 @@ class MOPInferenceWrapper:
 
             return mop_output.output
 
-    def run_batch(self, items: List[dict], triggered_by_mop: False) -> List[dict]:
+    def run_batch(self, items: List[dict], triggered_by_mop: bool, batch_size: Optional[int] = None) -> List[dict]:
         print(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
         logging.info(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
@@ -57,7 +55,9 @@ class MOPInferenceWrapper:
                 items]
 
             logging.info(f"Converted model inputs is {model_inputs}")
+            model_outputs = []
             model_outputs = self.model_wrapper.inference_batch(model_inputs)
+
             logging.info(f"Inference batch model outputs is {model_outputs}")
             mop_outputs = [self.model_wrapper.convert_model_output_to_mop_output(model_output).output for
                            model_output in model_outputs]
@@ -68,41 +68,13 @@ batch_model: Optional[DynamicBatchModel] = None
 base_model_wrapper: BaseModelWrapper = ModelWrapper()
 inference_wrapper: MOPInferenceWrapper = MOPInferenceWrapper(base_model_wrapper)
 batch_size: Optional[int] = None
+triggered_by_mop: bool = False
 
 
 class WrapModel(BaseModel):
-    def predict(self, items: List[Any], triggered_by_mop=False) -> List[Any]:
-        return inference_wrapper.run_batch(items, triggered_by_mop, batch_size=batch_size)
-
-
-def _get_dynamic_batch_args() -> Optional[Dict]:
-    """ if dynamic batch not enable, return None
-    """
-    if not os.path.exists(DYNAMIC_SETTINGS_YAML):
-        return None
-
-    # load settings.yml
-    with open(DYNAMIC_SETTINGS_YAML) as dynamic_settings_file:
-        try:
-            settings = yaml.safe_load(dynamic_settings_file)
-        except yaml.YAMLError:
-            raise Exception("Load Dynamic Setting Yaml Fail")
-
-    # check enable
-    dynamic_batch = settings.get('dynamicBatch', {})
-    enable = dynamic_batch.get('enable', None)
-    if enable is None:
-        return None
-    if not (isinstance(enable, bool) and enable):
-        return None
-
-    # get args
-    args = {
-        'max_batch_size': dynamic_batch.get('maxBatchSize'),
-        'idle_batch_size': dynamic_batch.get('idleBatchSize'),
-        'max_batch_interval': dynamic_batch.get('maxBatchInterval'),
-    }
-    return {k: v for k, v in args.items() if v is not None}
+    def predict(self, items: List[Any]) -> List[Any]:
+        print(f"in predict() function, triggered_by_mop={triggered_by_mop}")
+        return inference_wrapper.run_batch(items, triggered_by_mop=triggered_by_mop, batch_size=batch_size)
 
 
 class NumpyJsonEncoder(json.JSONEncoder):
@@ -128,13 +100,13 @@ Returns:
     None
 """
 
-def mop_init(model_root):
+
+def mop_init(model_root, dynamic_batch_args: None):
     global batch_model
     global batch_size
     inference_wrapper.init(model_root)
 
     # assign batch_model is enabled
-    dynamic_batch_args = _get_dynamic_batch_args()
     if dynamic_batch_args is not None:
         batch_model = DynamicBatchModel(WrapModel(), **dynamic_batch_args)
         batch_size = dynamic_batch_args.get('max_batch_size')
@@ -152,15 +124,19 @@ Returns:
     inference result
     
 """
-def mop_run(raw_data: any, triggered_by_mop, **kwargs) -> any:
+def mop_run(raw_data: any, is_mop_triggered: bool = False, **kwargs) -> any:
+    global triggered_by_mop
+    triggered_by_mop = is_mop_triggered
+    print(f"in mop_run() function, triggered_by_mop={triggered_by_mop}, is_mop_triggered={is_mop_triggered}")
     if batch_model is not None:
-        inference_result = batch_model.predict(raw_data, triggered_by_mop if isinstance(raw_data, list) else [raw_data])
+        raw_data = raw_data if isinstance(raw_data, list) else [raw_data]
+        inference_result = batch_model.predict(raw_data)
         return inference_result
     if isinstance(raw_data, dict):
         inference_result = inference_wrapper.run(raw_data, triggered_by_mop)
         return inference_result
     if isinstance(raw_data, list):
-        inference_result = inference_wrapper.run_batch(raw_data, triggered_by_mop)
+        inference_result = inference_wrapper.run_batch(raw_data, triggered_by_mop=triggered_by_mop)
         return inference_result
     raise Exception("Invalid input data format")
 
@@ -181,13 +157,24 @@ def build_response(inference_result: any) -> any:
 
 if __name__ == "__main__":
     model_root = "D:\code\carnegie-mop\sample\model"
-    mop_init(model_root)
-    data_dict = {"data": "354"}
-    res = mop_run(data_dict, False)
-    print(res)
+    # mop_init(model_root, None)
+    #
+    # text_dict = {"text": "354"}
+    # res = mop_run(text_dict, True)
+    # print(res)
+    # text_dict = [{"text": "354"}]
+    # res = mop_run(text_dict, True)
+    # print(res)
+
+    dynamic_batch = {
+        'enable': True,
+        'maxBatchSize': 12,
+        'idleBatchSize': 3,
+        'maxBatchInterval': 0.2
+    }
+
+    mop_init(model_root, dynamic_batch)
+
     text_dict = {"text": "354"}
-    res = mop_run(text_dict, True)
-    print(res)
-    text_dict = [{"text": "354"}]
     res = mop_run(text_dict, True)
     print(res)
