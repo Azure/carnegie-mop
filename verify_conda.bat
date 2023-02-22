@@ -1,5 +1,6 @@
 set environment=%1
 set python=%2
+call conda env remove -n %environment%
 call conda create -n %environment% python=%python% -y
 call conda activate %environment%
 call pip install -r src/requirements.txt
