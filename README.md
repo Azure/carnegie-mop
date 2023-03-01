@@ -117,8 +117,8 @@ Go to the MOP portal, click “Models”, fill in information of your model.
     - Make sure [Conda](https://conda.io/projects/conda/en/stable/user-guide/install/download.html) is downloaded.
     - Put [tool](verify_conda.bat) on your local directory where `src` and `privatepkgs` folder is put.
     - On windows, in the directory where `verify_conda.bat` located,
-      run `./verify_conda.bat environment=<envrionment-name> python=<version>`, for
-      example, `./verify_conda.bat mop-env 3.9`
+      run `./verify_conda.bat environment=<envrionment-name> python=<version> pip=<pip-version>`, for
+      example, `./verify_conda.bat mop-env 3.9 23.0.1 `
     - If you encounter error, you need to fix packages in `requirements.txt` according. For example, there might be some
       package confliction.
 2. Run `inference.py` locally on the environment you created.
