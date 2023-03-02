@@ -7,3 +7,4 @@ joblib==1.0.1
 xgboost==1.7.1
 mop-utils==1.5.1
 dill==0.3.6
+pyraisdk==0.2.0
