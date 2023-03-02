@@ -1,6 +1,7 @@
 import importlib
 import json
 import logging
+import os
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -27,8 +28,7 @@ class MOPInferenceWrapper:
         self.model_wrapper.init(model_root)
 
     def run(self, item: Dict, triggered_by_mop) -> Dict:
-        print(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
-        logging.info(f"function run(), input is {item}, triggered by mop: {triggered_by_mop}")
+        logging.info(f"function run(), triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
             model_output = self.model_wrapper.inference(item)
             return [model_output]
@@ -43,8 +43,7 @@ class MOPInferenceWrapper:
             return mop_output.output
 
     def run_batch(self, items: List[dict], triggered_by_mop: bool, batch_size: Optional[int] = None) -> List[dict]:
-        print(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
-        logging.info(f"function run_batch(), run_batch is {items}, triggered by mop: {triggered_by_mop}")
+        logging.info(f"function run_batch(), run_batch_size is {batch_size}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
             model_outputs = self.model_wrapper.inference_batch(items)
             return model_outputs
@@ -54,7 +53,6 @@ class MOPInferenceWrapper:
                 in
                 items]
 
-            logging.info(f"Converted model inputs is {model_inputs}")
             model_outputs = []
             model_outputs = self.model_wrapper.inference_batch(model_inputs)
 
@@ -73,7 +71,6 @@ triggered_by_mop: bool = False
 
 class WrapModel(BaseModel):
     def predict(self, items: List[Any]) -> List[Any]:
-        print(f"in predict() function, triggered_by_mop={triggered_by_mop}")
         return inference_wrapper.run_batch(items, triggered_by_mop=triggered_by_mop, batch_size=batch_size)
 
 
@@ -106,9 +103,13 @@ def mop_init(model_root, dynamic_batch_args: None):
     global batch_size
     inference_wrapper.init(model_root)
 
-    # assign batch_model is enabled
+    # assign environment variable
     if dynamic_batch_args is not None:
-        batch_model = DynamicBatchModel(WrapModel(), **dynamic_batch_args)
+        os.environ["PYRAISDK_MAX_BATCH_SIZE"] = str(dynamic_batch_args.get('max_batch_size'))
+        os.environ["PYRAISDK_IDLE_BATCH_SIZE"] = str(dynamic_batch_args.get('idle_batch_size'))
+        os.environ["PYRAISDK_MAX_BATCH_INTERVAL"] = str(dynamic_batch_args.get('max_batch_interval'))
+
+        batch_model = DynamicBatchModel(WrapModel())
         batch_size = dynamic_batch_args.get('max_batch_size')
 
 
@@ -124,10 +125,11 @@ Returns:
     inference result
     
 """
+
+
 def mop_run(raw_data: any, is_mop_triggered: bool = False, **kwargs) -> any:
     global triggered_by_mop
     triggered_by_mop = is_mop_triggered
-    print(f"in mop_run() function, triggered_by_mop={triggered_by_mop}, is_mop_triggered={is_mop_triggered}")
     if batch_model is not None:
         raw_data = raw_data if isinstance(raw_data, list) else [raw_data]
         inference_result = batch_model.predict(raw_data)
