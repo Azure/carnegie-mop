@@ -67,7 +67,7 @@ There are three folders, each of which contains different types of files that wi
           to `dynamicBatch.maxBatchSize`.
         - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
 
-For detailed information, please check [the model template](http://xxx) and [the sample model](https://xxxx).
+For detailed information, please check [the sample model](https://github.com/Azure/carnegie-mop/tree/main/sample).
 
 ### Online Running Environment
 
