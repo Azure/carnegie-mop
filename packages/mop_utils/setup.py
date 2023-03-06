@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mop_utils',
-    version='1.5.1',
+    version='1.5.2',
     description='Utilities for MOP',
     packages=['mop_utils'],
     package_dir={'mop_utils': './mop_utils'},
