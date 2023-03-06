@@ -1,6 +1,5 @@
 import importlib
 import json
-import logging
 import os
 from typing import Any, Dict, List, Optional
 
@@ -9,15 +8,12 @@ from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput
 from mop_utils.constant import CM_MODEL_WRAPPER_NAME
 from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
-try:
-    inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
-    ModelWrapper = [getattr(inference_module, i) for i in inference_module.__dict__.keys() if
-                    hasattr(inference_module.__dict__.get(i), '__bases__')
-                    and BaseModelWrapper in inference_module.__dict__.get(i).__bases__][0]
-except Exception as e:
-    result = str(e)
-    logging.exception(result)
-    raise e
+
+inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
+ModelWrapper = [getattr(inference_module, i) for i in inference_module.__dict__.keys() if
+                hasattr(inference_module.__dict__.get(i), '__bases__')
+                and BaseModelWrapper in inference_module.__dict__.get(i).__bases__][0]
+
 
 
 class MOPInferenceWrapper:
@@ -28,22 +24,18 @@ class MOPInferenceWrapper:
         self.model_wrapper.init(model_root)
 
     def run(self, item: Dict, triggered_by_mop) -> Dict:
-        logging.info(f"function run(), triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
             model_output = self.model_wrapper.inference(item)
             return [model_output]
         else:
             mop_input = MopInferenceInput().from_dict(item)
             model_input = self.model_wrapper.convert_mop_input_to_model_input(mop_input)
-            logging.info(f"Converted model input is {model_input}")
             model_output = self.model_wrapper.inference(model_input)
-            logging.info(f"Inference model output is {model_output}")
             mop_output = self.model_wrapper.convert_model_output_to_mop_output(model_output)
 
             return mop_output.output
 
     def run_batch(self, items: List[dict], triggered_by_mop: bool, batch_size: Optional[int] = None) -> List[dict]:
-        logging.info(f"function run_batch(), run_batch_size is {batch_size}, triggered by mop: {triggered_by_mop}")
         if not triggered_by_mop:
             model_outputs = self.model_wrapper.inference_batch(items)
             return model_outputs
@@ -53,10 +45,8 @@ class MOPInferenceWrapper:
                 in
                 items]
 
-            model_outputs = []
             model_outputs = self.model_wrapper.inference_batch(model_inputs)
 
-            logging.info(f"Inference batch model outputs is {model_outputs}")
             mop_outputs = [self.model_wrapper.convert_model_output_to_mop_output(model_output).output for
                            model_output in model_outputs]
             return mop_outputs
