@@ -3,9 +3,6 @@ import pickle
 from typing import List, Dict
 
 import nltk
-
-
-
 from mop_utils.base_model_wrapper import BaseModelWrapper, InferenceInput, InferenceOutput
 
 
@@ -27,18 +24,17 @@ class ModelWrapper(BaseModelWrapper):
     def inference(self, item: Dict) -> Dict:
         features = self.tokenizer.transform([item.get('data')])
         score = self.model.predict_proba(features)[0][1]
-        # score = 0.9
-        return {'score':score}
+        return {'score': score}
 
     def inference_batch(self, items: List[Dict]) -> List[Dict]:
         print(f'in inference batch, {items}')
         features = self.tokenizer.transform([x.get('data') for x in items])
         predicts = self.model.predict_proba(features)
-        scores = [ {'score':x[1]} for x in predicts]
+        scores = [{'score': x[1]} for x in predicts]
         return scores
 
     def convert_mop_input_to_model_input(self, mop_input: InferenceInput, **kwargs) -> Dict:
-        return  {"data": mop_input.text}
+        return {"data": mop_input.text}
 
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> InferenceOutput:
         inference_output = InferenceOutput()
@@ -57,10 +53,9 @@ if __name__ == "__main__":
     print(c_output)
 
     mop_input = InferenceInput(text="NIGGER PLEASE \n EAT A COCK, LOL HY.")
-    customized_input = model_wrapper.convert_mop_input_to_customized_input(mop_input)
+    customized_input = model_wrapper.convert_mop_input_to_model_input(mop_input)
     print(customized_input)
     assert mop_input.text == json.loads(customized_input).get('data')
 
-    mop_output = model_wrapper.convert_customized_output_to_mop_output(c_output)
+    mop_output = model_wrapper.convert_model_output_to_mop_output(c_output)
     print(mop_output)
-
