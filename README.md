@@ -186,7 +186,7 @@ For different modalities, we have different format requirements for the dataset 
         - `1`: The corresponding sample is positive.
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
-    - No null/empty values are allowed.
+    - **No null/empty/Nan values are allowed.**
     - Using “,” as delimiter.
 
 #### Image
@@ -202,7 +202,7 @@ For different modalities, we have different format requirements for the dataset 
         - `1`: The corresponding sample is positive.
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
-    - No null/empty values are allowed.
+    - **No null/empty/Nan values are allowed**.
     - Using “,” as delimiter.
 
 ### Grant MOP Access to Your Dataset
