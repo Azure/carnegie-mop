@@ -10,7 +10,7 @@ Pipeline (MOP).
 A **MODEL** in MOP normally contains all necessary files to run an inference, usually including environment setup
 configuration, model checkpoints, scripts to load the checkpoint files, and other dependencies.
 
-A **DATASET** in MOP is a binary classification dataset, including a data file and a label file.
+A **DATASET** in MOP is a binary classification dataset, including a collection of data samples and a collection of labels.
 
 ## Upload a Model
 
@@ -150,54 +150,45 @@ You should prepare your dataset in a Blob Container as below:
 ```
 <Your Dataset Name>
 │
-└───data          
-│   │   dataset.csv     # Required
-│
-│───label         
-│   │   label.csv       # Required
+└─── dataset.csv     # Required
+
 
 ```
+As mentioned above, an evaluation dataset on MOP is binary. MOP supports onboarding multiple datasets at one time. Each 
+csv file should contain columns of data and one or more label columns. By create the mapping between the label name in 
+the csv file and the dataset name on MOP, **MOP will help split one csv file to multiple binary datasets. The dataset 
+name should be unique in MOP ,and it cannot be changed**. 
 
-For different modalities, we have different format requirements for these files.
+For different modalities, we have different format requirements for the dataset file.
 
 #### Text
 
 - **dataset.csv**:
     - Encoded using UTF-8 with no BOM (Byte Order Mark).
-    - Only one column with the header "text".
-    - Each row (except for the header) should be a sample text.
-    - The number of rows in dataset.csv should be the same as label.csv.
+    - Each dataset.csv should have a data column with the header "text". Each cell under the data column should be a sample text.
+    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
+        - `0`: The corresponding sample is negative.
+        - `1`: The corresponding sample is positive.
+    - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
+    - All columns should have the same number of rows.
+    - No null/empty values are allowed.
     - Using “,” as delimiter.
-- **label.csv**:
-    - Encoded using UTF-8 with no BOM (Byte Order Mark).
-    - Only one column with the header "label".
-    - Each row (except for the header) should be the corresponding label of the sample in dataset.csv.
-    - The number of rows in dataset.csv should be the same as label.csv.
-    - Using “,” as delimiter.
-    - The label should be one of the following values:
-        - `0`: The sample is negative.
-        - `1`: The sample is positive.
 
 #### Image
 
 - **dataset.csv**:
-    - Four columns with headers "base64_image", "file_name", "image_width_pixels", "image_height_pixels".
+    - Four columns with headers "base64_image", "file_name", "image_width_pixels", "image_height_pixels". 
+      Values for these columns represents sample images in the dataset.
     - The content of column "base64_image" should be the base64 encoded string of the image.
     - The content of column " file_name " should include file name extension.
     - The content of column "image_width_pixels" and "image_height_pixels" should be positive integer.
-    - Each row (except for the header) should be a sample encoded using UTF-8 with no BOM (Byte Order Mark).
-    - The number of rows in dataset.csv should be the same as label.csv.
+    - - One or more label columns with customized header. Each cell under each label column should be one of the following values:
+        - `0`: The corresponding sample is negative.
+        - `1`: The corresponding sample is positive.
+    - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
+    - All columns should have the same number of rows.
+    - No null/empty values are allowed.
     - Using “,” as delimiter.
-- **label.csv**:
-    - Encoded using UTF-8 with no BOM (Byte Order Mark).
-    - Only one column with the header "label".
-    - Each row (except for the header) should be the corresponding label of the sample in dataset.csv.
-    - The number of rows in dataset.csv should be the same as label.csv.
-    - Using “,” as delimiter.
-    - The label should be one of the following values:
-        - `0`: The sample is negative.
-        - `1`: The sample is positive.
-          After preparation, users should save these files in a container under a storage account as organized above.
 
 ### Grant MOP Access to Your Dataset
 
@@ -212,29 +203,28 @@ for details.
 #### Create a Dataset on MOP
 
 Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fill in information of your dataset.
-
-- **Dataset Name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
-  created.**
-- **Dataset Description**: The description of your dataset. **It cannot be changed after the dataset is created.**
-- **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
 - **Modality**: The modality of your dataset. It should be one of the following values:
     - `Text`: The dataset is a text dataset.
+    - `Image`: The dataset is an image dataset.
+- **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
 - **Source Type**: The source type of your dataset. It should be one of the following values:
     - `Blob`: The dataset is stored in a Azure Blob Container.
 - **Dataset url**: the url of virtual directory in your container that contains dataset.csv mentioned in Prepare Your
   Dataset section.
   For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestdata/_
-- **Label url**: the url of virtual directory in your container that contains label.csv mentioned in Prepare Your
-  Dataset section.
-  For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestLabel/_
+- **Language** (for text datasets only): represent the language of datasets.
 
-#### Connect Your Dataset to a Task
-
-Any time after dataset upload, you can connect your dataset to a task.
-If you cannot find a proper task, please contact the MOP team via
+by mapping the label name in the csv file and the dataset name on MOP, MOP will help split one csv file to multiple 
+binary datasets according to the number of Label Mapping that you create.
+- **Label**: The label name in the csv file.
+- **Dataset Name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
+  created.**
+- **Connected task**: MOP requires you to connect your dataset to a Task. Any time after dataset upload, you can change to connect to a new task. If you cannot find a proper task, please contact the MOP team via
 **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
 ,
 and we will help you with it.
+- **Dataset Description**: The description of your dataset. **It cannot be changed after the dataset is created.**
+
 
 ## Q & A
 
