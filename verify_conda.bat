@@ -1,7 +1,10 @@
 set environment=%1
 set python=%2
+set pip=%3
+call conda env remove -n %environment%
 call conda create -n %environment% python=%python% -y
 call conda activate %environment%
+call conda install pip=%pip% -y
 call pip install -r src/requirements.txt
 
 if exist privatepkgs\ (

@@ -23,7 +23,7 @@ A **DATASET** in MOP is a binary classification dataset, including a collection 
 You should prepare your model checkpoint file(s), dependencies and loading script in a Blob Container as below:
 
 ```
-<Your Model Name>
+<Your Model Folder Name>
 │
 └───model               # Required
 │   │   model_ckpt.onnx
@@ -51,7 +51,7 @@ There are three folders, each of which contains different types of files that wi
   to run the model evaluation.
     - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
       Install this [package]( https://pypi.org/project/mop-utils/#history) source code can be
-      found [here](https://github.com/Azure/carnegie-mop/tree/main/packages/mop-utils) and inherit
+      found [here](https://github.com/Azure/carnegie-mop/tree/main/packages/mop_utils) and inherit
       the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch` methods.
     - **requirements.txt (required)**: This file contains the required packages that are used to run the model
       evaluation.
@@ -67,7 +67,7 @@ There are three folders, each of which contains different types of files that wi
           to `dynamicBatch.maxBatchSize`.
         - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
 
-For detailed information, please check [the model template](http://xxx) and [the sample model](https://xxxx).
+For detailed information, please check [the sample model](https://github.com/Azure/carnegie-mop/tree/main/sample).
 
 ### Online Running Environment
 
@@ -96,6 +96,11 @@ Go to the MOP portal, click “Models”, fill in information of your model.
     - `Both`: The model is running on both CPU and GPU.
 - **Model Type**: The model type of your model. It should be one of the following values:
     - `Blob`: The model is stored in a Azure Blob Container.
+- **Model Config** : The detailed configuration for your models, for example the dynamic batch information.
+    - `dynamicBatch.maxBatchSize`: The max batch size. Default is 12.
+    - `dynamicBatch.idleBatchSize`: The idle batch size. Default is 5. It should be less than or equal
+      to `dynamicBatch.maxBatchSize`.
+    - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
 - **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare
   Your Model section.
   _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestModel/_
@@ -112,11 +117,21 @@ Go to the MOP portal, click “Models”, fill in information of your model.
     - Make sure [Conda](https://conda.io/projects/conda/en/stable/user-guide/install/download.html) is downloaded.
     - Put [tool](verify_conda.bat) on your local directory where `src` and `privatepkgs` folder is put.
     - On windows, in the directory where `verify_conda.bat` located,
-      run `./verify_conda.bat environment=<envrionment-name> python=<version>`, for
-      example, `./verify_conda.bat mop-env 3.9`
+      run `./verify_conda.bat environment=<envrionment-name> python=<version> pip=<pip-version>`, for
+      example, `./verify_conda.bat mop-env 3.9 23.0.1 `
     - If you encounter error, you need to fix packages in `requirements.txt` according. For example, there might be some
       package confliction.
 2. Run `inference.py` locally on the environment you created.
+
+#### Model Onboarding state
+
+There are several state for the model onboarding process.
+- **created**: The model onboarding task is ready to be triggered. The next state is dataDownloaded. If the final state is verifyFailed, we will retry the logic, so the created state will show again.
+- **dataDownloaded**: The data on blob is downloaded successfully. The expected next state is endpointCreating. This process may take 1 - 30 minutes, depending on the file size and distance between the blob and our server.
+- **endpointCreating**: The endpoint in the backend is creating. The expected next state is deploymentCreating. This process may take no more than 10 minutes.
+- **deploymentCreating**: The deployment is creating in the backend. This process may take 10 to no more than 2 hours. Generally, it take around 10-15 minutes.
+- **verified**: This status show that the model you onboard is deployed successfully in the backend.
+- **verifyFailed**: This status show that the model you onboard is not deployed successfuly in the backend. For the failed reason, you could click on the **details** button.
 
 #### Connect Your Models to One or More Tasks
 
@@ -148,7 +163,7 @@ you want to update, click “Upgrade Version”, fill in information of your mod
 You should prepare your dataset in a Blob Container as below:
 
 ```
-<Your Dataset Name>
+<Your Dataset Folder Name>
 │
 └─── dataset.csv     # Required
 
@@ -310,5 +325,7 @@ A model owner can go to `Models -> Your Model -> Evaluation by datasets`, choose
 and select `Public evaluation result` to publish them.
 
 If you are the model owner, and you cannot see the expected evaluation results, please contact us via
-**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
-.
+**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
+
+### Q: Why do I fail to install mop-utils package?
+The package mop-utils depends on python which version is no lower than than 3.8.
