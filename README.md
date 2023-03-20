@@ -220,11 +220,11 @@ for details.
 #### Create a Dataset on MOP
 
 Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fill in information of your dataset.
-- **Modality**: The modality of your dataset. It should be one of the following values:
+- **Dataset modality**: The modality of your dataset. It should be one of the following values:
     - `Text`: The dataset is a text dataset.
     - `Image`: The dataset is an image dataset.
 - **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
-- **Source Type**: The source type of your dataset. It should be one of the following values:
+- **Source type**: The source type of your dataset. It should be one of the following values:
     - `Blob`: The dataset is stored in a Azure Blob Container.
 - **Dataset url**: the url of virtual directory in your container that contains dataset.csv mentioned in Prepare Your
   Dataset section.
@@ -234,13 +234,13 @@ Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fi
 by mapping the label name in the csv file and the dataset name on MOP, MOP will help split one csv file to multiple 
 binary datasets according to the number of Label Mapping that you create.
 - **Label**: The label name in the csv file.
-- **Dataset Name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
+- **Dataset name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
   created.**
 - **Connected task**: MOP requires you to connect your dataset to a task. Any time after dataset upload, you can change to connect to a new task. If you cannot find a proper task, please contact the MOP team via
 **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
 ,
 and we will help you with it.
-- **Dataset Description**: The description of your dataset. **It cannot be changed after the dataset is created.**
+- **Description**: The description of your dataset.
 
 
 ## Q & A
