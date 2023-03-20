@@ -184,9 +184,10 @@ For different modalities, we have different format requirements for the dataset 
     - One or more label columns with customized header. Each cell under each label column should be one of the following values:
         - `0`: The corresponding sample is negative.
         - `1`: The corresponding sample is positive.
+    - Make sure there is **no duplicate header name** in the csv file.
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
-    - **No null/empty/Nan values are allowed.**
+    - **No null/empty/NaN values are allowed.**
     - Using “,” as delimiter.
 
 #### Image
@@ -200,9 +201,10 @@ For different modalities, we have different format requirements for the dataset 
     - - One or more label columns with customized header. Each cell under each label column should be one of the following values:
         - `0`: The corresponding sample is negative.
         - `1`: The corresponding sample is positive.
+    - Make sure there is **no duplicate header name** in the csv file.
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
-    - **No null/empty/Nan values are allowed**.
+    - **No null/empty/NaN values are allowed**.
     - Using “,” as delimiter.
 
 ### Grant MOP Access to Your Dataset
@@ -234,7 +236,7 @@ binary datasets according to the number of Label Mapping that you create.
 - **Label**: The label name in the csv file.
 - **Dataset Name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
   created.**
-- **Connected task**: MOP requires you to connect your dataset to a Task. Any time after dataset upload, you can change to connect to a new task. If you cannot find a proper task, please contact the MOP team via
+- **Connected task**: MOP requires you to connect your dataset to a task. Any time after dataset upload, you can change to connect to a new task. If you cannot find a proper task, please contact the MOP team via
 **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
 ,
 and we will help you with it.
