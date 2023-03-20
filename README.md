@@ -331,3 +331,9 @@ If you are the model owner, and you cannot see the expected evaluation results, 
 
 ### Q: Why do I fail to install mop-utils package?
 The package mop-utils depends on python which version is no lower than than 3.8.
+
+### Q: Why the model onboarding status is verifyFailed？
+- 1. check provided error message. 
+- 2. check logs to get detailed error message and update a new model revision to fix the problem.
+- 3. check whether your packages are right using the conda_verify.bat tool. Note, your private package should be no large then 2.5G.
+
