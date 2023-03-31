@@ -8,12 +8,17 @@ from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput
 from mop_utils.constant import CM_MODEL_WRAPPER_NAME
 from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
-
 inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
-ModelWrapper = [getattr(inference_module, i) for i in inference_module.__dict__.keys() if
-                hasattr(inference_module.__dict__.get(i), '__bases__')
-                and BaseModelWrapper in inference_module.__dict__.get(i).__bases__][0]
 
+wrappers = []
+for i in inference_module.__dict__.keys():
+    if hasattr(inference_module.__dict__.get(i), '__bases__'):
+        if BaseModelWrapper in inference_module.__dict__.get(i).__bases__[0].__bases__:
+            wrappers.append(getattr(inference_module, i))
+        if BaseModelWrapper in inference_module.__dict__.get(i).__bases__:
+            wrappers.append(getattr(inference_module, i))
+
+ModelWrapper = [i for i in wrappers if i.__module__ == CM_MODEL_WRAPPER_NAME][0]
 
 
 class MOPInferenceWrapper:
