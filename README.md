@@ -345,7 +345,11 @@ requests per second. This type of testing is particularly useful when you want t
 requests that the system can handle without degrading its performance. 
 
     The platform uses python async mechanism to send requests to the service, gradually increasing the "target RPS" from 
-1 using step 10. For each target RPS, the platform runs the load test for 5 minutes, and the requests are randomly sent. 
+1 using step 10. For each target RPS, the platform runs the load test for 5 minutes, and the requests are randomly sent.
+  (detailed implementation for randomness: the platform starts 5 threads at the beginning of each second, and asks each 
+thread to send a request right now. In each thread, it will wait a random time between 0 and 1000 millisecond before 
+actually sending the request. This is to make sure that the requests are not sent at the same time in each second, but
+are sent randomly in each second.)
 
     The key metrics provided by the platform include the actual RPS, latency percentile, successful request count, 
 failed request count, and infrastructure utilization percentage (cpu, memory, gpu, gpu memory, and disk). The 
