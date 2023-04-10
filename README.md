@@ -337,3 +337,47 @@ The package mop-utils depends on python which version is no lower than than 3.8.
 - 2. check logs to get detailed error message and update a new model revision to fix the problem.
 - 3. check whether your packages are right using the conda_verify.bat tool. Note, your private package should be no large then 2.5G.
 
+### Q: What is the difference between the load test (perRPS) and load test (perConcurrency)?
+- **perRPS**: 
+
+    PerRPS is a type of load test that focuses on testing the system's capacity to handle a given number of 
+requests per second. This type of testing is particularly useful when you want to identify the maximum number of 
+requests that the system can handle without degrading its performance. 
+
+    The platform uses python async mechanism to send requests to the service, gradually increasing the "target RPS" from 
+1 using step 10. For each target RPS, the platform runs the load test for 5 minutes, and the requests are randomly sent. 
+
+    The key metrics provided by the platform include the actual RPS, latency percentile, successful request count, 
+failed request count, and infrastructure utilization percentage (cpu, memory, gpu, gpu memory, and disk). The 
+platform will stop the load test if the failure rate is over 1 percent, and provide the result in graphs with 
+the x-axis representing target RPS.
+
+    -  _Recommended scenarios for PerRPS:_
+
+    PerRPS is ideal for scenarios where you need to measure the maximum number of requests that the system can handle 
+before degrading its performance. This type of testing is particularly useful for predicting how the system will 
+perform under peak traffic conditions. It's also helpful when you need to identify potential bottlenecks in the system, 
+such as high CPU or memory usage, and optimize system resources accordingly.
+
+
+- **PerConcurrency**:
+
+    PerConcurrency is a type of load test that focuses on testing the system's capacity to handle a given number of 
+concurrent users. This type of testing is particularly useful when you want to identify the maximum number of users 
+that the system can handle without degrading its performance.
+
+    The platform gradually increases the "concurrency count" from 1, using step 10. For each concurrency count, the 
+platform uses the specified number of single-thread clients to send requests. For example, if the concurrency count 
+is 3, the platform will have 3 single-thread clients, and each client will send requests continuously. Each client 
+is independent of each other, sends a request, gets the response, and then sends the next request with no waiting time.
+
+    The key metrics provided by the platform include the actual concurrency count, latency percentile, successful request 
+count, failed request count, and infrastructure utilization percentage (cpu, memory, gpu, gpu memory, and disk). The 
+platform will stop the load test after 5 minutes and provide the result in graphs with the x-axis representing the concurrency count.
+
+    - _Recommended scenarios for PerConcurrency:_
+
+    PerConcurrency is ideal for scenarios where you need to measure the maximum number of concurrent users that the 
+system can handle before degrading its performance. This type of testing is particularly useful for predicting how 
+the system will perform under peak user conditions. It's also helpful when you need to identify potential bottlenecks 
+in the system, such as high CPU or memory usage, and optimize system resources accordingly.
