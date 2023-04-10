@@ -375,7 +375,7 @@ platform uses the specified number of single-thread clients to send requests. Fo
 is 3, the platform will have 3 single-thread clients, and each client will send requests continuously. Each client 
 is independent of each other, sends a request, gets the response, and then sends the next request with no waiting time.
 
-    The key metrics provided by the platform include the actual concurrency count, latency percentile, successful request 
+    The key metrics provided by the platform include the actual RPS, latency percentile, successful request 
 count, failed request count, and infrastructure utilization percentage (cpu, memory, gpu, gpu memory, and disk). The 
 platform will stop the load test after 5 minutes and provide the result in graphs with the x-axis representing the concurrency count.
 
