@@ -242,6 +242,11 @@ binary datasets according to the number of Label Mapping that you create.
 and we will help you with it.
 - **Description**: The description of your dataset.
 
+## Dataset evaluation 
+How to trigger evaluation?
+There are two ways to trigger evaluation.
+- Once a model is onboared successfuly, all the datasets bound to the task will be evaluated.
+- Once a new dataset is bound to the task, all models will be evaluated. One thing to mention that, if the model is very old, onboarded 1 week ago, the evaluation will not be run. You will see the status as EXPIRED.
 
 ## Q & A
 
