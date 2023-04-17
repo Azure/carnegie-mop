@@ -5,18 +5,21 @@ from typing import List, Dict, Optional, Any
 class MopInferenceInput:
     def __init__(self, text: Optional[str] = None, image: Optional[str] = None,
                  width: Optional[int] = None,
-                 height: Optional[int] = None) -> None:
+                 height: Optional[int] = None,
+                 images: Optional[List] = None) -> None:
         self.__text__ = text
         self.__image__ = image
         self.__width__ = width
         self.__height__ = height
+        self.__images__ = images
 
     def from_dict(self, input_dict: Dict) -> Any:
         self.__text__ = input_dict.get('text', None)
         self.__image__ = input_dict.get('image', None)
         self.__width__ = input_dict.get('width', None)
         self.__height__ = input_dict.get('height', None)
-        if self.__text__ is None and self.__image__ is None:
+        self.__images__ = input_dict.get('images', None)
+        if self.__text__ is None and self.__image__ is None and self.__images__ is None:
             raise ValueError('Either text or image must be provided')
         return self
 
@@ -57,6 +60,14 @@ class MopInferenceInput:
     @height.setter
     def height(self, height: int) -> None:
         self.__height__ = height
+
+    @property
+    def images(self) -> str:
+        return self.__images__
+
+    @images.setter
+    def images(self, images: str) -> None:
+        self.__images__ = images
 
 
 class InferenceInput(MopInferenceInput):
