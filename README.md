@@ -198,13 +198,30 @@ For different modalities, we have different format requirements for the dataset 
     - The content of column "base64_image" should be the base64 encoded string of the image.
     - The content of column " file_name " should include file name extension.
     - The content of column "image_width_pixels" and "image_height_pixels" should be positive integer.
-    - - One or more label columns with customized header. Each cell under each label column should be one of the following values:
+    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
         - `0`: The corresponding sample is negative.
         - `1`: The corresponding sample is positive.
     - Make sure there is **no duplicate header name** in the csv file.
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
     - **No null/empty/NaN values are allowed**.
+    - Using “,” as delimiter.
+
+#### ImageAndText
+
+- **dataset.csv**:
+    - One column with header "text", representing the text of sample.
+    - The content of text column should be a string using UTF-8.
+    - **Up to 20 placeholders** in format `##{image_0}, ##{image_1}, ..., ##{image_19}` are allowed in the text. Placeholders
+in one text should be in order (from 0) and should not be duplicated. **Text without placeholders is also allowed.**
+    - **Up to 20 columns** with header "image_0", "image_1", ..., "image_19", representing the images of sample. 
+    - The content of images columns should be the base64 encoded string of an image.
+    - Image columns should be in order (from 0) and consecutive.
+    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
+        - `0`: The corresponding sample is negative.
+        - `1`: The corresponding sample is positive.
+    - Make sure there is **no duplicate header name** in the csv file.
+    - All columns should have the same number of rows.
     - Using “,” as delimiter.
 
 ### Grant MOP Access to Your Dataset
