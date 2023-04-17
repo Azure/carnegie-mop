@@ -13,7 +13,7 @@ All data file use comma(,) as delimiter.
 - data column(required): text
 - data value: it should be one text without line break. Each image should be represented by a placeholder as ##{image_header} like ##{image_0}. No Null/NaN/empty in text value.
 - image column(optional): image_0, image_1, image_2, ……, image_19
-- image value: base64 string of image which appears in text value as ##{image_header}. It can be null/na only when this image header doesn't appeared in text value.
+- image value: base64 string of image which appears in text value as ##{image_header}. It can be null/na only when this image header doesn't appear in text value.
 - label column(required. Support multiple headers but no duplicate, at least one label): hate, violent
 - label value: it should be one of 0(negative) or 1(positive).
 
