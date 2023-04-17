@@ -174,7 +174,9 @@ csv file should contain columns of data and one or more label columns. By create
 the csv file and the dataset name on MOP, **MOP will help split one csv file to multiple binary datasets. The dataset 
 name should be unique in MOP ,and it cannot be changed**. 
 
-For different modalities, we have different format requirements for the dataset file.
+For different modalities, we have different format requirements for the dataset file. 
+
+Please visit **[sample datasets](https://github.com/Azure/carnegie-mop/tree/david/dev/sample/dataset)** for more details.
 
 #### Text
 
