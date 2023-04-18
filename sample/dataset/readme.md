@@ -1,4 +1,4 @@
-All data files use comma(,) as delimiter.
+All data files use tab ('\t') as delimiter.
 
 ### Text Modality
 

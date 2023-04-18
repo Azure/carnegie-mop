@@ -190,7 +190,7 @@ Please visit **[sample datasets](https://github.com/Azure/carnegie-mop/tree/davi
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
     - **No null/empty/NaN values are allowed.**
-    - Using “,” as delimiter.
+    - Using “\t” as delimiter.
 
 #### Image
 
@@ -207,7 +207,7 @@ Please visit **[sample datasets](https://github.com/Azure/carnegie-mop/tree/davi
     - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
     - All columns should have the same number of rows.
     - **No null/empty/NaN values are allowed**.
-    - Using “,” as delimiter.
+    - Using “\t” as delimiter.
 
 #### ImageAndText
 
@@ -224,7 +224,7 @@ in one text should be in order (from 0) and should not be duplicated. **Text wit
         - `1`: The corresponding sample is positive.
     - Make sure there is **no duplicate header name** in the csv file.
     - All columns should have the same number of rows.
-    - Using “,” as delimiter.
+    - Using “\t” as delimiter.
 
 ### Grant MOP Access to Your Dataset
 
