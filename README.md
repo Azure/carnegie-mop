@@ -242,6 +242,7 @@ Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fi
 - **Dataset modality**: The modality of your dataset. It should be one of the following values:
     - `Text`: The dataset is a text dataset.
     - `Image`: The dataset is an image dataset.
+    - `ImageAndText`: The dataset is an image and text dataset. Each sample contains one text and one or more images.
 - **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
 - **Source type**: The source type of your dataset. It should be one of the following values:
     - `Blob`: The dataset is stored in a Azure Blob Container.
