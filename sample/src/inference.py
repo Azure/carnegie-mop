@@ -55,7 +55,7 @@ if __name__ == "__main__":
     mop_input = InferenceInput(text="NIGGER PLEASE \n EAT A COCK, LOL HY.")
     customized_input = model_wrapper.convert_mop_input_to_model_input(mop_input)
     print(customized_input)
-    assert mop_input.text == json.loads(customized_input).get('data')
+    assert mop_input.text == customized_input.get('data')
 
     mop_output = model_wrapper.convert_model_output_to_mop_output(c_output)
     print(mop_output)
