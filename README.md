@@ -301,11 +301,6 @@ There are two ways to trigger evaluation.
 
 Once it is created, you can find your case on the top of the page in DSAT tab.
 
-MOP uses Service Principal for authentication.
-Users should grant the **Storage Blob Data Reader** role to our system (service principal: **
-cm-model-onboarding-prod-sp**).
-See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal)
-for details.
 
 ### Review the case
 The current reviewer can get the detailed content of the case and review it. The reviewer can also add comments to the case. There are several actions to a case:
