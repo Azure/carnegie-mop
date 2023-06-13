@@ -12,6 +12,8 @@ configuration, model checkpoints, scripts to load the checkpoint files, and othe
 
 A **DATASET** in MOP is a binary classification dataset, including a collection of data samples and a collection of labels.
 
+A **DSAT case** in MOP is a specific text/image that users think are misclassified by a model.
+
 ## Upload a Model
 
 ### Prerequisites
@@ -105,6 +107,10 @@ Go to the MOP portal, click “Models”, fill in information of your model.
   Your Model section.
   _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestModel/_
 - **Version**: The version of your model. It should be unique for this model in MOP.
+- **Sample post data**: A valid iuput for model inference in original input contract. It should be a JSON string. 
+  - For example: `{"data": "This is a test input."}`, `{"image_base64": "<BASE64>", image_name: "myImage.jpg"}`
+  - Please note that the input contract should be the same as the one in your model.
+  
 - **Model Taxonomy**: All supported taxonomies of the model. **This setting cannot be changed after the model is
   created.**
 - **Taxonomy Mapping**: The mapping between the system-defined taxonomy and the model output. **This setting cannot be
@@ -262,11 +268,56 @@ binary datasets according to the number of Label Mapping that you create.
 and we will help you with it.
 - **Description**: The description of your dataset.
 
-## Dataset evaluation 
+### Dataset evaluation 
 How to trigger evaluation?
 There are two ways to trigger evaluation.
 - Once a model is onboared successfuly, all the datasets bound to the task will be evaluated.
 - Once a new dataset is bound to the task, all models will be evaluated. One thing to mention that, if the model is very old, onboarded 1 week ago, the evaluation will not be run. You will see the status as EXPIRED.
+
+
+## Upload a DSAT case
+
+### Prerequisites
+
+- The **content** (text or image) of the case
+- The **traceId** that we can use to trace the case in the system that you find the case.
+
+### Create a DSAT case on MOP
+
+- Go to the MOP portal, click “DSAT” tab on the left side, and then click “Create a case”.
+- Select the modality and the task(s) you think your case should belong to. 
+- Fill in the information:
+  - Content: For images, you can upload you image file. For text, you can input your text content.
+    - Note: There might be sensitive content in the case, MOP allows h**istorical reviewers ONLY** of the case to access the content.
+  - Description: The description of your case.
+  - TraceId: The traceId that we can use to trace the case in the system that you find the case. It can be a correlationId, a transactionId, or any other Id that can help us to trace the case.
+  - Expected result: The expected result of your case. It should be one of the following values:
+    - 0: You think the case does NOT contain harmful content for the specified tasks (the case is a **false positive**)
+    - 1: You think the case does contain harmful content for the specified tasks (the case is a **false negative**)
+  - Assignee: the next reviewer that you think should review the case.
+  - Comment: Any other information that you think is helpful for the reviewer to review the case.
+  - Tags: Ang tags you want to add to the case. Customized tags are allowed.
+- Click “Submit” to submit the case.
+
+Once it is created, you can find your case on the top of the page in DSAT tab.
+
+MOP uses Service Principal for authentication.
+Users should grant the **Storage Blob Data Reader** role to our system (service principal: **
+cm-model-onboarding-prod-sp**).
+See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal)
+for details.
+
+### Review the case
+The current reviewer can get the detailed content of the case and review it. The reviewer can also add comments to the case. There are several actions to a case:
+- **Assign**: Assign the case to another reviewer.
+- **Confirm**: Confirm the case is actually a DSAT case. The one who confirms the case will be responsible for its resolution.
+- **Fixed**: Confirm a case is fixed. The case will be closed and will not be reviewed anymore.
+- **Close**: Close the case if the current reviewer thinks it is not a DSAT case. The case will be closed and will not be reviewed anymore.
+- **Reopen**: Reopen the case if the case submitter thinks it is a DSAT case and closed incorrectly. The case will be reopened and will be reviewed again.
+
+### Regression test
+When onboarding a model, the model contributor can choose to perform regression test on the model. MOP will automatically trigger regression test on the DSAT cases that are bound to the task(s) that the model is bound to. The regression test result will be shown on the model detail page.
+
 
 ## Q & A
 
