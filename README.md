@@ -54,7 +54,7 @@ There are three folders, each of which contains different types of files that wi
     - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
       Install this [package]( https://pypi.org/project/mop-utils/#history) source code can be
       found [here](https://github.com/Azure/carnegie-mop/tree/main/packages/mop_utils) and inherit
-      the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch` methods.
+      the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch`,  `convert_model_output_to_mop_output`, `convert_mop_input_to_model_input` methods.
     - **requirements.txt (required)**: This file contains the required packages that are used to run the model
       evaluation.
       The required packages will be installed before running the model evaluation. If required packages are private
