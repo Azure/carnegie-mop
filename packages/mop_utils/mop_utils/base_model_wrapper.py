@@ -253,7 +253,7 @@ class MopInferenceOutput:
 
     @property
     def output(self) -> Dict:
-        return {'scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
+        return {'confidence_scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
 
 
 class InferenceOutput(MopInferenceOutput):
