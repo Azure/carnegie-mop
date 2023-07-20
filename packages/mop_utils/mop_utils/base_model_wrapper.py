@@ -36,15 +36,12 @@ class PredictedLabel:
             if not v or not isinstance(v, (float, int)):
                 raise TypeError(f"Value of label value pairs should be float or int.")
             
-        number = self.get_value_keys_number()
-        if 0 >= number:
+        number = len(self.get_value_keys())
+        if 0 == number:
             raise ValueError(f"There must be at least one label in value pairs: {number}")
         
     def get_value_keys(self):
         return self.label_values.keys()
-    
-    def get_value_keys_number(self):
-        return len(self.get_value_keys())
     
     
 class ConfidenceScore:
@@ -286,4 +283,5 @@ class BaseModelWrapper(ABC):
     @abstractmethod
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
+    
     
