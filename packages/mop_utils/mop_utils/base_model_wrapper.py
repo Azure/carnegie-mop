@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Any
-from util import PredictedLabel, ConfidenceScore
+from typing import List, Dict, Optional, Any, Union
+from util import PredictedLabel, ConfidenceScore, AcsResponse, ImageAnalysisInput, TextAnalysisInput
 
 
 class MopInferenceInput:
@@ -110,20 +110,20 @@ class MopInferenceOutput:
         """
         Initialize MopInferenceOutput
         @param output_dict: output dictionary.
-        @type output_dict: Dict which have two key: predicted_labels and confidence_scores in it.
+        @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
                            Refer to class output example as above.
         """
         self.__confidence_scores__ = dict()
         self.__predicted_labels__ = dict()
         if output_dict:
             self.from_dict(output_dict)
-        self._validate()
+        # self._validate()
 
     def from_dict(self, output_dict: dict) -> Any:
         """
         Copy from other dict.
         @param output_dict: output dictionary.
-        @type output_dict: Dict which have two key: predicted_labels and confidence_scores in it.
+        @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
                            Refer to class output example as above.
         @return:
         @rtype:
@@ -133,18 +133,18 @@ class MopInferenceOutput:
         
         for k, v in predicted_labels.items():
             predict_label = PredictedLabel(k, v)
-            self.__predicted_labels__[predict_label.label] = predict_label.label_values
+            self.__predicted_labels__[predict_label.label_name] = predict_label.label_values
         
         for k, v in confidence_scores.items():
             conf_score = ConfidenceScore(k, v)
-            self.__confidence_scores__[conf_score.label] = conf_score.scores
+            self.__confidence_scores__[conf_score.label_name] = conf_score.scores
         
-        self._validate()
+        # self._validate()
         return self
     
     def _if_keys_match(self):
         """
-        Check if label keys match score keys
+        Check if label_name keys match score keys
         """
         if len(self.__predicted_labels__.keys()) != len(self.__confidence_scores__.keys()):
             return False
@@ -156,7 +156,7 @@ class MopInferenceOutput:
     
     def _if_value_keys_match(self):
         """
-        Check if label value keys match score value keys
+        Check if label_name value keys match score value keys
         """
         if not self.__predicted_labels__ and not self.__confidence_scores__:
             return True
@@ -173,8 +173,8 @@ class MopInferenceOutput:
             
     def _validate(self):
         """
-        Validate if taxonomy name, type, label name, type, numbers and value within
-        predicted_labels and confidence_scores match.
+        Validate if label name, type, numbers and value within predicted_labels
+        and confidence_scores match.
         @return:
         @rtype:
         """
@@ -185,8 +185,8 @@ class MopInferenceOutput:
         
         # labels should also be match
         if not self._if_value_keys_match():
-            raise ValueError(f"Predicted_labels label values number should equal to scores "
-                             f"label values number: {self.__confidence_scores__}, {self.__predicted_labels__}")
+            raise ValueError(f"Predicted_labels label values number should equal to scores label values number: "
+                             f"{self.__confidence_scores__}, {self.__predicted_labels__}")
         
     def __str__(self) -> str:
         return str(vars(self))
@@ -246,10 +246,17 @@ class BaseModelWrapper(ABC):
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
    
-    def convert_acs_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
+    # def convert_acs_input_to_model_input(self, acs_input: AcsResponse, **kwargs) -> Dict:
+    #     pass
+    #
+    # def convert_model_output_to_acs_output(self, customized_output: Dict, **kwargs) -> AcsResponse:
+    #     pass
+
+    # TODO: consult Chenglong
+    # optional
+    def convert_acs_request_to_model_inference_input(self, req: Union[TextAnalysisInput, ImageAnalysisInput]) -> object:
         pass
     
-    def convert_model_output_to_acs_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
+    # optional
+    def convert_model_inference_output_to_acs_response(self, out: object) -> AcsResponse:
         pass
-    
-    
