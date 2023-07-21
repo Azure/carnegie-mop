@@ -1,92 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Any, Union
+from typing import List, Dict, Optional, Any
+from util import PredictedLabel, ConfidenceScore
 
 
-class PredictedLabel:
-    """
-    Predict label: for example:
-      "label_example": {
-            "example-1": 1,
-            "example-2": 0,
-            "example-3": 0
-      }
-    """
-
-    def __init__(self, label: str, label_values: Dict[str, int]):
-        self.label = label
-        self.label_values = label_values
-        self.validate()
-    
-    def get_name(self):
-        return self.label
-    
-    def get_label_values(self):
-        return self.label_values
-        
-    def validate(self):
-        if not self.label or not isinstance(self.label, str):
-            raise TypeError(f"Label name must be type str and value must not empty. {self.label}")
-    
-        if not self.label_values or not isinstance(self.label_values, dict):
-            raise TypeError(f"Label scores must be dict. {self.label_values}")
-        
-        for k, v in self.label_values.items():
-            if not k or not isinstance(k, str):
-                raise TypeError(f"Key of label value paris should be str and not empty: {k}")
-            
-            if v is None or not isinstance(v, int):
-                raise TypeError(f"Value of label value pairs should be int: {k}, {v}, {type(v)}")
-            
-        number = len(self.get_value_keys())
-        if 0 == number:
-            raise ValueError(f"There must be at least one label in value pairs: {number}")
-        
-    def get_value_keys(self):
-        return self.label_values.keys()
-    
-    
-class ConfidenceScore:
-    """
-    Confidence score: for example:
-        "label_example": {
-            "example-1": 0.3,
-            "example-2": 0,
-            "example-3": 0.2
-        }
-    """
-    
-    def __init__(self, label_name: str, confidence_scores: Dict[str, Union[float, int]]):
-        self.label: str = label_name
-        self.scores: Dict[str, Union[float, int]] = confidence_scores
-        self.validate()
-        
-    def get_label_name(self):
-        return self.label
-    
-    def get_confidence_scores(self):
-        return self.scores
-    
-    def validate(self):
-        if not self.label or not isinstance(self.label, str):
-            raise TypeError(f"Label name must be str and not empty: {self.label}")
-        
-        if not self.scores or not isinstance(self.scores, dict):
-            raise TypeError(f"Confidence scores must be dict and may not empty: {self.scores}")
-        
-        for k, v in self.scores.items():
-            if not k or not isinstance(k, str):
-                raise TypeError(f"Confidence score key name must be str and not empty: {k}")
-            
-            if v is None or not isinstance(v, (float, int)):
-                raise TypeError(f"Confidence score value must be float or int and not empty: {k}, {v}, {type(v)}")
-
-        if 0 >= len(self.get_confidence_scores_keys()):
-            raise ValueError(f"There must be at least one key in confidence score: {self.scores}")
-        
-    def get_confidence_scores_keys(self):
-        return self.scores.keys()
-    
-    
 class MopInferenceInput:
     def __init__(self, text: Optional[str] = None, image: Optional[str] = None,
                  width: Optional[int] = None,
@@ -189,20 +105,12 @@ class MopInferenceOutput:
         }
     }
     """
-    def __init__(self, confidence_scores: Optional[Dict] = None, predicted_labels: Optional[Dict] = None) -> None:
+    
+    def __init__(self, output_dict: Optional[Dict] = None) -> None:
         self.__confidence_scores__ = dict()
         self.__predicted_labels__ = dict()
-        if confidence_scores:
-            for k, v in confidence_scores.items():
-                conf_score = ConfidenceScore(k, v)
-                self.__confidence_scores__[conf_score.get_label_name()] = conf_score.get_confidence_scores()
-
-        if predicted_labels:
-            for k, v in predicted_labels.items():
-                pre_label = PredictedLabel(k, v)
-                self.__predicted_labels__[pre_label.get_name()] = pre_label.get_label_values()
-                
-        self.validate()
+        self.from_dict(output_dict)
+        self._validate()
 
     def from_dict(self, output_dict: dict) -> Any:
         predicted_labels: Dict[PredictedLabel] = output_dict["predicted_labels"]
@@ -210,34 +118,28 @@ class MopInferenceOutput:
         
         for k, v in predicted_labels.items():
             predict_label = PredictedLabel(k, v)
-            self.__predicted_labels__[predict_label.get_name()] = predict_label.get_label_values()
+            self.__predicted_labels__[predict_label.label] = predict_label.label_values
         
         for k, v in confidence_scores.items():
             conf_score = ConfidenceScore(k, v)
-            self.__confidence_scores__[conf_score.get_label_name()] = conf_score.get_confidence_scores()
+            self.__confidence_scores__[conf_score.label] = conf_score.scores
         
-        self.validate()
+        self._validate()
         return self
     
-    def predicted_labels_keys(self):
-        return self.__predicted_labels__.keys()
-    
-    def confidence_scores_keys(self):
-        return self.__confidence_scores__.keys()
-    
-    def if_keys_match(self):
+    def _if_keys_match(self):
         """
         if label keys match score keys
         """
-        if len(self.predicted_labels_keys()) != len(self.confidence_scores_keys()):
+        if len(self.__predicted_labels__.keys()) != len(self.__confidence_scores__.keys()):
             return False
         
-        if set(self.predicted_labels_keys()) != set(self.confidence_scores_keys()):
+        if set(self.__predicted_labels__.keys()) != set(self.__confidence_scores__.keys()):
             return False
         
         return True
     
-    def if_value_keys_match(self):
+    def _if_value_keys_match(self):
         """
         If label value keys match score value keys
         """
@@ -247,21 +149,21 @@ class MopInferenceOutput:
         for key in self.__confidence_scores__.keys():
             conf_score = ConfidenceScore(key, self.__confidence_scores__[key])
             pre_label = PredictedLabel(key, self.__predicted_labels__.get(key, None))
-            conf_keys = conf_score.get_confidence_scores_keys()
-            pre_keys = pre_label.get_value_keys()
+            conf_keys = conf_score.scores.keys()
+            pre_keys = pre_label.label_values.keys()
             if set(conf_keys) != set(pre_keys):
                 return False
             
         return True
             
-    def validate(self):
+    def _validate(self):
         # labels name should be match
-        if not self.if_keys_match():
+        if not self._if_keys_match():
             raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
-                             f"{self.predicted_labels_keys()}, {self.confidence_scores_keys()}")
+                             f"{self.__predicted_labels__.keys()}, {self.__confidence_scores__.keys()}")
         
         # sub-labels should also be match
-        if not self.if_value_keys_match():
+        if not self._if_value_keys_match():
             raise ValueError(f"Predicted_labels label values number should equal to scores "
                              f"label values number: {self.__confidence_scores__}, {self.__predicted_labels__}")
         
@@ -322,5 +224,11 @@ class BaseModelWrapper(ABC):
     @abstractmethod
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
+    
+    def convert_acs_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
+        pass
+    
+    def convert_model_output_to_acs_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
+        pass
     
     
