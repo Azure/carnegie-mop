@@ -49,9 +49,9 @@ class ConfidenceScore:
         }
     """
     
-    def __init__(self, label_name: str, confidence_scores: Dict[str, Union[float, int]]):
+    def __init__(self, label_name: str, confidence_score: Dict[str, Union[float, int]]):
         self.label: str = label_name
-        self.scores: Dict[str, Union[float, int]] = confidence_scores
+        self.scores: Dict[str, Union[float, int]] = confidence_score
         self.validate()
     
     def validate(self):
