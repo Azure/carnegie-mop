@@ -33,7 +33,7 @@ class PredictedLabel:
         for k, v in self.label_values.items():
             if not k or not isinstance(k, str):
                 raise TypeError(f"Key of label value paris should be str and not empty: {k}")
-            if not v or not isinstance(v, (float, int)):
+            if v is None or not isinstance(v, (float, int)):
                 raise TypeError(f"Value of label value pairs should be float or int.")
             
         number = len(self.get_value_keys())
@@ -69,14 +69,14 @@ class ConfidenceScore:
         if not self.label or not isinstance(self.label, str):
             raise TypeError(f"Label name must be str and not empty: {self.label}")
         
-        if not self.scores or isinstance(self.scores, dict):
+        if not self.scores or not isinstance(self.scores, dict):
             raise TypeError(f"Confidence scores must be dict and may not empty: {self.scores}")
         
         for k, v in self.scores.items():
             if not k or not isinstance(k, str):
                 raise TypeError(f"Confidence score key name must be str and not empty: {k}")
             
-            if not v or not isinstance(v, (float, int)):
+            if v is None or not isinstance(v, (float, int)):
                 raise TypeError(f"Confidence score value must be float or int and not empty: {v}")
 
         if 0 >= len(self.get_confidence_scores_keys()):
@@ -164,11 +164,13 @@ class MopInferenceOutput:
         self.__predicted_labels__ = dict()
         if confidence_scores:
             for k, v in confidence_scores.items():
-                self.__confidence_scores__[k] = v
+                conf_score = ConfidenceScore(k, v)
+                self.__confidence_scores__[conf_score.get_label_name()] = conf_score.get_confidence_scores()
 
         if predicted_labels:
             for k, v in predicted_labels.items():
-                self.__predicted_labels__[k] = v
+                pre_label = PredictedLabel(k, v)
+                self.__predicted_labels__[pre_label.get_name()] = pre_label.get_label_values()
                 
         self.validate()
 
@@ -193,7 +195,10 @@ class MopInferenceOutput:
     def confidence_scores_keys(self):
         return self.__confidence_scores__.keys()
     
-    def if_label_keys_match_score_keys(self):
+    def if_keys_match(self):
+        """
+        if label keys match score keys
+        """
         if len(self.predicted_labels_keys()) != len(self.confidence_scores_keys()):
             return False
         
@@ -202,14 +207,16 @@ class MopInferenceOutput:
         
         return True
     
-    def if_label_value_keys_match_score_value_keys(self):
+    def if_value_keys_match(self):
+        """
+        If label value keys match score value keys
+        """
         if not self.__predicted_labels__ and not self.__confidence_scores__:
             return True
         
         for key in self.__confidence_scores__.keys():
-            conf_score: ConfidenceScore = self.__confidence_scores__[key]
-            pre_label: PredictedLabel = self.__predicted_labels__[key]
-            
+            conf_score = ConfidenceScore(key, self.__confidence_scores__[key])
+            pre_label = PredictedLabel(key, self.__predicted_labels__.get(key, None))
             conf_keys = conf_score.get_confidence_scores_keys()
             pre_keys = pre_label.get_value_keys()
             if set(conf_keys) != set(pre_keys):
@@ -218,13 +225,15 @@ class MopInferenceOutput:
         return True
             
     def validate(self):
-        if not self.if_label_keys_match_score_keys():
-            raise ValueError(f"predicted_labels labels number should equal to scores labels number: "
+        # labels name should be match
+        if not self.if_keys_match():
+            raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
                              f"{self.predicted_labels_keys()}, {self.confidence_scores_keys}")
         
-        if not self.if_label_value_keys_match_score_value_keys():
-            raise ValueError(f"predicted_labels label values number should equal to scores "
-                             f"Label values number: {self.__confidence_scores__}, {self.__predicted_labels__}")
+        # sub-labels should also be match
+        if not self.if_value_keys_match():
+            raise ValueError(f"Predicted_labels label values number should equal to scores "
+                             f"label values number: {self.__confidence_scores__}, {self.__predicted_labels__}")
         
     def __str__(self) -> str:
         return str(vars(self))
