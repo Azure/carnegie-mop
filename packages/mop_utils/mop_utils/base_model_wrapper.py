@@ -33,8 +33,9 @@ class PredictedLabel:
         for k, v in self.label_values.items():
             if not k or not isinstance(k, str):
                 raise TypeError(f"Key of label value paris should be str and not empty: {k}")
-            if v is None or not isinstance(v, (float, int)):
-                raise TypeError(f"Value of label value pairs should be float or int.")
+            
+            if v is None or not isinstance(v, int):
+                raise TypeError(f"Value of label value pairs should be int: {k}, {v}, {type(v)}")
             
         number = len(self.get_value_keys())
         if 0 == number:
@@ -77,7 +78,7 @@ class ConfidenceScore:
                 raise TypeError(f"Confidence score key name must be str and not empty: {k}")
             
             if v is None or not isinstance(v, (float, int)):
-                raise TypeError(f"Confidence score value must be float or int and not empty: {v}")
+                raise TypeError(f"Confidence score value must be float or int and not empty: {k}, {v}, {type(v)}")
 
         if 0 >= len(self.get_confidence_scores_keys()):
             raise ValueError(f"There must be at least one key in confidence score: {self.scores}")
@@ -228,7 +229,7 @@ class MopInferenceOutput:
         # labels name should be match
         if not self.if_keys_match():
             raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
-                             f"{self.predicted_labels_keys()}, {self.confidence_scores_keys}")
+                             f"{self.predicted_labels_keys()}, {self.confidence_scores_keys()}")
         
         # sub-labels should also be match
         if not self.if_value_keys_match():
