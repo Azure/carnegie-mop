@@ -161,12 +161,13 @@ class InferenceInput(MopInferenceInput):
 
 class MopInferenceOutput:
     """
+    MopInferenceOutput: output example:
     {
         "predicted_labels": {
             "violence": {
                 "severity-1": 1,
                 "helloworld": 0,
-                "severity-2": 0.5485
+                "severity-2": 0
             },
             "hate": {
                 "severity-1": 0,
