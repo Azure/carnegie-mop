@@ -160,6 +160,34 @@ class InferenceInput(MopInferenceInput):
 
 
 class MopInferenceOutput:
+    """
+    {
+        "predicted_labels": {
+            "violence": {
+                "severity-1": 1,
+                "helloworld": 0,
+                "severity-2": 0.5485
+            },
+            "hate": {
+                "severity-1": 0,
+                "hello": 0,
+                "severity-2": 1
+            }
+        },
+        "confidence_scores": {
+            "violence": {
+                "severity-1": 0.525,
+                "helloworld": 0,
+                "severity-2": 0.5485
+            },
+            "hate": {
+                "severity-1": 0.225,
+                "hello": 0.225,
+                "severity-2": 0.26544
+            }
+        }
+    }
+    """
     def __init__(self, confidence_scores: Optional[Dict] = None, predicted_labels: Optional[Dict] = None) -> None:
         self.__confidence_scores__ = dict()
         self.__predicted_labels__ = dict()
