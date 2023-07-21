@@ -107,12 +107,27 @@ class MopInferenceOutput:
     """
     
     def __init__(self, output_dict: Optional[Dict] = None) -> None:
+        """
+        Initialize MopInferenceOutput
+        @param output_dict: output dictionary.
+        @type output_dict: Dict which have two key: predicted_labels and confidence_scores in it.
+                           Refer to class output example as above.
+        """
         self.__confidence_scores__ = dict()
         self.__predicted_labels__ = dict()
-        self.from_dict(output_dict)
+        if output_dict:
+            self.from_dict(output_dict)
         self._validate()
 
     def from_dict(self, output_dict: dict) -> Any:
+        """
+        Copy from other dict.
+        @param output_dict: output dictionary.
+        @type output_dict: Dict which have two key: predicted_labels and confidence_scores in it.
+                           Refer to class output example as above.
+        @return:
+        @rtype:
+        """
         predicted_labels: Dict[PredictedLabel] = output_dict["predicted_labels"]
         confidence_scores: Dict[ConfidenceScore] = output_dict["confidence_scores"]
         
@@ -129,7 +144,7 @@ class MopInferenceOutput:
     
     def _if_keys_match(self):
         """
-        if label keys match score keys
+        Check if label keys match score keys
         """
         if len(self.__predicted_labels__.keys()) != len(self.__confidence_scores__.keys()):
             return False
@@ -141,7 +156,7 @@ class MopInferenceOutput:
     
     def _if_value_keys_match(self):
         """
-        If label value keys match score value keys
+        Check if label value keys match score value keys
         """
         if not self.__predicted_labels__ and not self.__confidence_scores__:
             return True
@@ -157,12 +172,18 @@ class MopInferenceOutput:
         return True
             
     def _validate(self):
-        # labels name should be match
+        """
+        Validate if taxonomy name, type, label name, type, numbers and value within
+        predicted_labels and confidence_scores match.
+        @return:
+        @rtype:
+        """
+        # taxonomy name should be match
         if not self._if_keys_match():
             raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
                              f"{self.__predicted_labels__.keys()}, {self.__confidence_scores__.keys()}")
         
-        # sub-labels should also be match
+        # labels should also be match
         if not self._if_value_keys_match():
             raise ValueError(f"Predicted_labels label values number should equal to scores "
                              f"label values number: {self.__confidence_scores__}, {self.__predicted_labels__}")
@@ -224,7 +245,7 @@ class BaseModelWrapper(ABC):
     @abstractmethod
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
-    
+   
     def convert_acs_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
         pass
     
