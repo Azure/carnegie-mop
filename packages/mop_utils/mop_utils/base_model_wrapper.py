@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Any, Union
-from util import PredictedLabel, ConfidenceScore, AcsResponse, ImageAnalysisInput, TextAnalysisInput
+from typing import List, Dict, Optional, Any
+from util import PredictedLabel, ConfidenceScore, AcsTextResponse, AcsImageResponse, \
+    ImageAnalysisInput, TextAnalysisInput
 
 
 class MopInferenceInput:
@@ -251,12 +252,24 @@ class BaseModelWrapper(ABC):
     #
     # def convert_model_output_to_acs_output(self, customized_output: Dict, **kwargs) -> AcsResponse:
     #     pass
+    
+    @staticmethod
+    def supported_modality() -> list:
+        return ["Text", "Image", "ImageAndText"]
 
-    # TODO: consult Chenglong
+    # TODO: consult
     # optional
-    def convert_acs_request_to_model_inference_input(self, req: Union[TextAnalysisInput, ImageAnalysisInput]) -> object:
+    def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
+        pass
+
+    # optional
+    def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
         pass
     
     # optional
-    def convert_model_inference_output_to_acs_response(self, out: object) -> AcsResponse:
+    def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
+        pass
+    
+    # optional
+    def convert_model_inference_output_to_acs_text_response(self, out: object) -> AcsTextResponse:
         pass

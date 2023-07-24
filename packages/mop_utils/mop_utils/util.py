@@ -18,7 +18,14 @@ class AnalysisResult:
     severity_level: int = 0     # predicted label
 
 
-class AcsResponse:
+class AcsImageResponse:
+    hate = AnalysisResult()
+    self_harm = AnalysisResult()
+    sexual = AnalysisResult()
+    violence = AnalysisResult()
+
+
+class AcsTextResponse:
     hate = AnalysisResult()
     self_harm = AnalysisResult()
     sexual = AnalysisResult()
