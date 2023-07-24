@@ -63,8 +63,9 @@ class PredictedLabel:
             if not k or not isinstance(k, str):
                 raise TypeError(f"Key of label value should be type str and not empty: {k}")
             
-            if v is None or not isinstance(v, int):
-                raise TypeError(f"The value of label value should be int: {k}, {v}, {type(v)}")
+            if v is None or not isinstance(v, int) or v not in (1, 0):
+                raise TypeError(f"The value of label value should be int( 1 or 0 ): "
+                                f"key: {k}, value: {v}, type: {type(v)}")
         
         number = len(self.label_values.keys())
         if 0 == number:
@@ -111,7 +112,8 @@ class ConfidenceScore:
                 raise TypeError(f"Confidence score key name must be str and not empty: {k}")
             
             if v is None or not isinstance(v, (float, int)):
-                raise TypeError(f"Confidence score value must be float or int and not empty: {k}, {v}, {type(v)}")
+                raise TypeError(f"Confidence score value must be float or int and not empty: "
+                                f"key: {k}, value: {v}, type: {type(v)}")
         
         if 0 == len(self.scores.keys()):
             raise ValueError(f"There must be at least one key in confidence score: {self.scores}")
