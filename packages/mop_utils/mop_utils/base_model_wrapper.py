@@ -247,17 +247,10 @@ class BaseModelWrapper(ABC):
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
    
-    # def convert_acs_input_to_model_input(self, acs_input: AcsResponse, **kwargs) -> Dict:
-    #     pass
-    #
-    # def convert_model_output_to_acs_output(self, customized_output: Dict, **kwargs) -> AcsResponse:
-    #     pass
-    
     @staticmethod
     def supported_modality() -> list:
         return ["Text", "Image", "ImageAndText"]
 
-    # TODO: consult
     # optional
     def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
         pass

@@ -53,6 +53,18 @@ class PredictedLabel:
         self.label_name = label_name
         self.label_values = label_values
         # self.validate()
+        
+    def output(self):
+        """
+        Output of predictedLabel. For example:
+        "identity_hate": {
+            "positive": 1,
+            "negative": 0
+        }
+        @return:
+        @rtype:
+        """
+        return {self.label_name: self.label_values}
     
     def validate(self):
         """
@@ -101,6 +113,19 @@ class ConfidenceScore:
         self.label_name: str = label_name
         self.scores: Dict[str, Union[float, int]] = confidence_score
         # self.validate()
+    
+    def output(self) -> dict:
+        """
+        Output of ConfidenceScore. For example:
+        "identity_hate": {
+            "positive": 0.713,
+            "negative": 0.287
+        }
+        @return:
+        @rtype:
+        """
+        
+        return {self.label_name: self.scores}
     
     def validate(self):
         """
