@@ -247,22 +247,44 @@ class BaseModelWrapper(ABC):
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
    
-    @staticmethod
-    def supported_modality() -> list:
-        return ["Text", "Image", "ImageAndText"]
-
-    # optional
     def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
+        """
+        Optional implementation: Convert ACS text request to model inference input
+        @param req: ACS text request
+        @type req: TextAnalysisInput
+        @return: Model inference input
+        @rtype: object
+        """
         pass
 
-    # optional
-    def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
-        pass
-    
-    # optional
-    def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
-        pass
-    
-    # optional
     def convert_model_inference_output_to_acs_text_response(self, out: object) -> AcsTextResponse:
+        """
+        Optional implementation: Convert model inference output to ACS text response
+        @param out: Model inference output
+        @type out: object
+        @return: ACS text response
+        @rtype: AcsTextResponse
+        """
         pass
+    
+    def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
+        """
+        Optional implementation: Convert ACS image request to model inference input
+        @param req: ACS image request
+        @type req: ImageAnalysisInput
+        @return: Model inference input
+        @rtype: object
+        """
+        pass
+    
+    def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
+        """
+        Optional implementation: Convert model inference output to ACS image response
+        @param out: Model inference output
+        @type out: object
+        @return: ACS image response
+        @rtype: AcsImageResponse
+        """
+        pass
+ 
+    
