@@ -129,8 +129,11 @@ class MopInferenceOutput:
         @return:
         @rtype:
         """
-        predicted_labels: Dict[PredictedLabel] = output_dict["predicted_labels"]
-        confidence_scores: Dict[ConfidenceScore] = output_dict["confidence_scores"]
+        
+        predicted_labels: Dict[PredictedLabel] = output_dict.get("predicted_labels", None)
+        confidence_scores: Dict[ConfidenceScore] = output_dict.get("confidence_scores", None)
+        if not predicted_labels or not confidence_scores:
+            raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
         
         for k, v in predicted_labels.items():
             predict_label = PredictedLabel(k, v)
