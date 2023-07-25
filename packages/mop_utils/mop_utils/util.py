@@ -14,8 +14,8 @@ class TextAnalysisInput:
 
 
 class AnalysisResult:
-    harmful_score: float = 0.0  # confidence score
-    severity_level: int = 0     # predicted label
+    harmful_score: float = 0.0
+    severity_level: int = 0
 
 
 class AcsImageResponse:
