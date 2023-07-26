@@ -73,7 +73,10 @@ class MopInferenceInput:
 
 
 class InferenceInput(MopInferenceInput):
-    """this is a subclass to be compatible with old version"""
+    """
+    Deprecated:
+    this is a subclass to be compatible with old version
+    """
 
 
 class MopInferenceOutput:
