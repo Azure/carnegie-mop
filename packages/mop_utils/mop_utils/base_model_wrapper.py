@@ -177,7 +177,7 @@ class MopInferenceOutput:
             
     def _validate(self):
         """
-        Validate if label name, type, numbers and value within predicted_labels
+        Validate if label name, type, the numbers of and value within predicted_labels
         and confidence_scores match.
         @return:
         @rtype:
@@ -189,8 +189,9 @@ class MopInferenceOutput:
         
         # labels should also be match
         if not self._if_value_keys_match():
-            raise ValueError(f"Predicted_labels label values number should equal to scores label values number: "
-                             f"{self.__confidence_scores__}, {self.__predicted_labels__}")
+            raise ValueError(f"Predicted_labels the numbers of label values should equal to "
+                             f"the numbers of scores label values: {self.__confidence_scores__}, "
+                             f"{self.__predicted_labels__}")
         
     def __str__(self) -> str:
         return str(vars(self))
