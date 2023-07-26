@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Any
-from util import PredictedLabel, ConfidenceScore, AcsTextResponse, AcsImageResponse, \
-    ImageAnalysisInput, TextAnalysisInput
+from util import AcsTextResponse, AcsImageResponse, ImageAnalysisInput, TextAnalysisInput, MopInferenceOutputValidator
 
 
 class MopInferenceInput:
@@ -110,89 +109,28 @@ class MopInferenceOutput:
     }
     """
     
-    def __init__(self, output_dict: Optional[Dict] = None) -> None:
+    def __init__(self, output_dict: dict) -> None:
         """
         Initialize MopInferenceOutput
         @param output_dict: output dictionary.
         @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
                            Refer to class output example as above.
         """
-        self.__confidence_scores__ = dict()
-        self.__predicted_labels__ = dict()
-        if output_dict:
-            self.from_dict(output_dict)
-        # self.validate()
+        self.predicted_labels = output_dict.get("predicted_labels", None)
+        self.confidence_scores = output_dict.get("confidence_scores", None)
+        if not self.__predicted_labels__ or not self.__confidence_scores__:
+            raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
+
+        MopInferenceOutputValidator(self.__predicted_labels__, self.__confidence_scores__).validate()
 
     def from_dict(self, output_dict: dict) -> Any:
         """
-        Copy from other dict.
-        @param output_dict: output dictionary.
-        @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
-                           Refer to class output example as above.
-        @return:
-        @rtype:
+        Deprecated
         """
-        predicted_labels: Dict = output_dict.get("predicted_labels", None)
-        confidence_scores: Dict = output_dict.get("confidence_scores", None)
-        if not predicted_labels or not confidence_scores:
-            raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
-        
-        for k, v in predicted_labels.items():
-            predict_label = PredictedLabel(k, v)
-            self.__predicted_labels__[predict_label.label_name] = predict_label.label_values
-        
-        for k, v in confidence_scores.items():
-            conf_score = ConfidenceScore(k, v)
-            self.__confidence_scores__[conf_score.label_name] = conf_score.scores
-        
-        # self.validate()
+        self.__confidence_scores__ = output_dict['confidence_scores']
+        self.__predicted_labels__ = output_dict['predicted_labels']
         return self
     
-    def _if_keys_match(self):
-        """
-        Check if label_name keys match score keys
-        """
-        if len(self.__predicted_labels__.keys()) != len(self.__confidence_scores__.keys()):
-            return False
-        
-        if set(self.__predicted_labels__.keys()) != set(self.__confidence_scores__.keys()):
-            return False
-        
-        return True
-    
-    def _if_value_keys_match(self):
-        """
-        Check if label_name value keys match score value keys
-        """
-        if not self.__predicted_labels__ and not self.__confidence_scores__:
-            return True
-        
-        for key in self.__confidence_scores__.keys():
-            conf_score = ConfidenceScore(key, self.__confidence_scores__[key])
-            pre_label = PredictedLabel(key, self.__predicted_labels__.get(key, None))
-            conf_keys = conf_score.scores.keys()
-            pre_keys = pre_label.label_values.keys()
-            if set(conf_keys) != set(pre_keys):
-                return False
-            
-        return True
-            
-    def validate(self):
-        """
-        Validate if label name, type, the numbers of and value within predicted_labels
-        and confidence_scores match.
-        @return:
-        @rtype:
-        """
-        if not self._if_keys_match():
-            raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
-                             f"{self.__predicted_labels__.keys()}, {self.__confidence_scores__.keys()}")
-        
-        if not self._if_value_keys_match():
-            raise ValueError(f"Predicted_labels the numbers of label values should equal to "
-                             f"the numbers of scores label values: {self.__confidence_scores__}, "
-                             f"{self.__predicted_labels__}")
-        
     def __str__(self) -> str:
         return str(vars(self))
 

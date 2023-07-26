@@ -32,120 +32,112 @@ class AcsTextResponse:
     violence = AnalysisResult()
 
 
-class PredictedLabel:
-    """Predict label class: it has a label name, label name has its properties and relevant value.
-    for example:
-      "label_name": {
-            "label_value_name-1": 1,
-            "label_value_name-2": 0,
-            "label_value_name-3": 0
-      }
+class MopInferenceOutputValidator:
+    """
+    MOP inference output validator
     """
     
-    def __init__(self, label_name: str, label_values: Dict[str, int]):
+    def __init__(self, predicted_label: dict, confidence_scores: dict):
+        self.predicted_label = predicted_label
+        self.confidence_scores = confidence_scores
+    
+    def _if_valid_predicted_label(self):
         """
-        Initialize label and label values
-        @param label_name: label name.
-        @type label_name: str
-        @param label_values: label values
-        @type label_values: Dictionary which key type is str, value type is int, its 'value' should be 1 or 0.
+           Validates label name, type and label value name, type and value type.
+           @return:
+           @rtype:
+       """
+        if self.predicted_label:
+            for key, value in self.predicted_label.items():
+                label_name, label_values = key, value
+                if not label_name or not isinstance(label_name, str):
+                    raise TypeError(f"Label name must be type str and value must be not empty. {label_name}")
+            
+                if not label_values or not isinstance(label_values, dict):
+                    raise TypeError(f"Label scores must be dict: {label_values}")
+            
+                for k, v in label_values.items():
+                    if not k or not isinstance(k, str):
+                        raise TypeError(f"Key of label value should be type str and not empty: {k}")
+                
+                    if v is None or not isinstance(v, int) or v not in (1, 0):
+                        raise TypeError(f"The value of label value should be int( 1 or 0 ): "
+                                        f"key: {k}, value: {v}, type: {type(v)}")
+            
+                number = len(label_values.keys())
+                if number == 0:
+                    raise ValueError(f"There must be at least one label in value: {number}")
+            
+    def _if_valid_confidence_scores(self):
         """
-        self.label_name = label_name
-        self.label_values = label_values
-        # self.validate()
+            Validates label name, type and label value name, type and value type.
+            @return:
+            @rtype:
+        """
+        if self.confidence_scores:
+            for key, value in self.confidence_scores.items():
+                label_name, scores = key, value
+                if not label_name or not isinstance(label_name, str):
+                    raise TypeError(f"Label name must be str and not empty: {label_name}")
+            
+                if not scores or not isinstance(scores, dict):
+                    raise TypeError(f"Confidence scores must be dict and may not empty: {scores}")
+            
+                for k, v in scores.items():
+                    if not k or not isinstance(k, str):
+                        raise TypeError(f"Confidence score key name must be str and not empty: {k}")
+                
+                    if v is None or not isinstance(v, (float, int)):
+                        raise TypeError(f"Confidence score value must be float or int and not empty: "
+                                        f"key: {k}, value: {v}, type: {type(v)}")
+            
+                if len(scores.keys()) == 0:
+                    raise ValueError(f"There must be at least one key in confidence score: {scores}")
+            
+    def _if_keys_match(self):
+        """
+        Check if label_name keys match score keys
+        """
+        if len(self.predicted_label.keys()) != len(self.confidence_scores.keys()):
+            return False
         
-    def output(self) -> dict:
+        if set(self.predicted_label.keys()) != set(self.confidence_scores.keys()):
+            return False
+        
+        return True
+    
+    def _if_value_keys_match(self):
         """
-        Output of predictedLabel. For example:
-        "identity_hate": {
-            "positive": 1,
-            "negative": 0
-        }
-        @return: Dictionary of predicted label with label name and its values
-        @rtype: Dictionary
+        Check if label_name value keys match score value keys
         """
-        return {self.label_name: self.label_values}
+        if not self.predicted_label and not self.confidence_scores:
+            return True
+        
+        for key in self.confidence_scores.keys():
+            conf_score = self.confidence_scores[key]
+            pre_label = self.predicted_label.get(key, None)
+            conf_keys = conf_score.keys()
+            pre_keys = pre_label.keys()
+            if set(conf_keys) != set(pre_keys):
+                return False
+        
+        return True
     
     def validate(self):
         """
-        Validates label name, type and label value name, type and value type.
+        Validate if label name, type, the numbers of and value within predicted_labels
+        and confidence_scores match.
         @return:
         @rtype:
         """
-        if not self.label_name or not isinstance(self.label_name, str):
-            raise TypeError(f"Label name must be type str and value must be not empty. {self.label_name}")
         
-        if not self.label_values or not isinstance(self.label_values, dict):
-            raise TypeError(f"Label scores must be dict. {self.label_values}")
+        self._if_valid_predicted_label()
+        self._if_valid_confidence_scores()
         
-        for k, v in self.label_values.items():
-            if not k or not isinstance(k, str):
-                raise TypeError(f"Key of label value should be type str and not empty: {k}")
-            
-            if v is None or not isinstance(v, int) or v not in (1, 0):
-                raise TypeError(f"The value of label value should be int( 1 or 0 ): "
-                                f"key: {k}, value: {v}, type: {type(v)}")
+        if not self._if_keys_match():
+            raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
+                             f"{self.predicted_label.keys()}, {self.confidence_scores.keys()}")
         
-        number = len(self.label_values.keys())
-        if number == 0:
-            raise ValueError(f"There must be at least one label in value: {number}")
-
-
-class ConfidenceScore:
-    """Confidence score class: it has a label name, and label name have its properties and relevant value.
-    for example:
-        "label_name": {
-            "label_value_name-1": 0.3,
-            "label_value_name-2": 0,
-            "label_value_name-3": 0.2
-        }
-    """
-    
-    def __init__(self, label_name: str, confidence_score: Dict[str, Union[float, int]]):
-        """
-        Initial confidence score.
-        @param label_name: label name
-        @type label_name: str
-        @param confidence_score: confidence score
-        @type confidence_score: Dictionary which key type is str, and value type is a float or int,
-                                its 'value' should between 0 and 1.
-        """
-        self.label_name: str = label_name
-        self.scores: Dict[str, Union[float, int]] = confidence_score
-        # self.validate()
-    
-    def output(self) -> dict:
-        """
-        Output of ConfidenceScore. For example:
-        "identity_hate": {
-            "positive": 0.713,
-            "negative": 0.287
-        }
-        @return: Dictionary of confidence score with label name and score labels and its value
-        @rtype: Dictionary
-        """
-        
-        return {self.label_name: self.scores}
-    
-    def validate(self):
-        """
-        Validates label name, type and label value name, type and value type.
-        @return:
-        @rtype:
-        """
-        if not self.label_name or not isinstance(self.label_name, str):
-            raise TypeError(f"Label name must be str and not empty: {self.label_name}")
-        
-        if not self.scores or not isinstance(self.scores, dict):
-            raise TypeError(f"Confidence scores must be dict and may not empty: {self.scores}")
-        
-        for k, v in self.scores.items():
-            if not k or not isinstance(k, str):
-                raise TypeError(f"Confidence score key name must be str and not empty: {k}")
-            
-            if v is None or not isinstance(v, (float, int)):
-                raise TypeError(f"Confidence score value must be float or int and not empty: "
-                                f"key: {k}, value: {v}, type: {type(v)}")
-
-        if len(self.scores.keys()) == 0:
-            raise ValueError(f"There must be at least one key in confidence score: {self.scores}")
+        if not self._if_value_keys_match():
+            raise ValueError(f"Predicted_labels the label value keys should match score value keys: "
+                             f"{self.confidence_scores}, {self.predicted_label}")
