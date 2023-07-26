@@ -118,7 +118,7 @@ class MopInferenceOutput:
         self.__predicted_labels__ = dict()
         if output_dict:
             self.from_dict(output_dict)
-        # self._validate()
+        # self.validate()
 
     def from_dict(self, output_dict: dict) -> Any:
         """
@@ -143,7 +143,7 @@ class MopInferenceOutput:
             conf_score = ConfidenceScore(k, v)
             self.__confidence_scores__[conf_score.label_name] = conf_score.scores
         
-        # self._validate()
+        # self.validate()
         return self
     
     def _if_keys_match(self):
@@ -175,7 +175,7 @@ class MopInferenceOutput:
             
         return True
             
-    def _validate(self):
+    def validate(self):
         """
         Validate if label name, type, the numbers of and value within predicted_labels
         and confidence_scores match.
