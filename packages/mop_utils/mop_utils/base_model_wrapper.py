@@ -86,25 +86,25 @@ class MopInferenceOutput:
         "predicted_labels": {
             "violence": {
                 "severity-1": 1,
-                "helloworld": 0,
-                "severity-2": 0
+                "severity-2": 0,
+                "severity-3": 0
             },
             "hate": {
-                "severity-1": 0,
-                "hello": 0,
-                "severity-2": 1
+                "sev-1": 0,
+                "sev-2": 0,
+                "sev-3": 1
             }
         },
         "confidence_scores": {
             "violence": {
                 "severity-1": 0.525,
-                "helloworld": 0,
-                "severity-2": 0.5485
+                "severity-2": 0,
+                "severity-3": 0.5485
             },
             "hate": {
-                "severity-1": 0.225,
-                "hello": 0.225,
-                "severity-2": 0.26544
+                "sev-1": 0.225,
+                "sev-2": 0.225,
+                "sev-3": 0.26544
             }
         }
     }
@@ -132,9 +132,8 @@ class MopInferenceOutput:
         @return:
         @rtype:
         """
-        
-        predicted_labels: Dict[PredictedLabel] = output_dict.get("predicted_labels", None)
-        confidence_scores: Dict[ConfidenceScore] = output_dict.get("confidence_scores", None)
+        predicted_labels: Dict = output_dict.get("predicted_labels", None)
+        confidence_scores: Dict = output_dict.get("confidence_scores", None)
         if not predicted_labels or not confidence_scores:
             raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
         
@@ -185,12 +184,10 @@ class MopInferenceOutput:
         @return:
         @rtype:
         """
-        # taxonomy name should be match
         if not self._if_keys_match():
             raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
                              f"{self.__predicted_labels__.keys()}, {self.__confidence_scores__.keys()}")
         
-        # labels should also be match
         if not self._if_value_keys_match():
             raise ValueError(f"Predicted_labels the numbers of label values should equal to "
                              f"the numbers of scores label values: {self.__confidence_scores__}, "
