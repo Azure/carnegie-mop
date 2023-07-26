@@ -54,15 +54,15 @@ class PredictedLabel:
         self.label_values = label_values
         # self.validate()
         
-    def output(self):
+    def output(self) -> dict:
         """
         Output of predictedLabel. For example:
         "identity_hate": {
             "positive": 1,
             "negative": 0
         }
-        @return:
-        @rtype:
+        @return: Dictionary of predicted label with label name and its values
+        @rtype: Dictionary
         """
         return {self.label_name: self.label_values}
     
@@ -121,8 +121,8 @@ class ConfidenceScore:
             "positive": 0.713,
             "negative": 0.287
         }
-        @return:
-        @rtype:
+        @return: Dictionary of confidence score with label name and score labels and its value
+        @rtype: Dictionary
         """
         
         return {self.label_name: self.scores}
