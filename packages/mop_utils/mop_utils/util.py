@@ -33,7 +33,7 @@ class AcsTextResponse:
 
 
 class PredictedLabel:
-    """Predict label:
+    """Predict label class: it has a label name, label name has its properties and relevant value.
     for example:
       "label_name": {
             "label_value_name-1": 1,
@@ -87,12 +87,12 @@ class PredictedLabel:
                                 f"key: {k}, value: {v}, type: {type(v)}")
         
         number = len(self.label_values.keys())
-        if 0 == number:
+        if number == 0:
             raise ValueError(f"There must be at least one label in value: {number}")
 
 
 class ConfidenceScore:
-    """Confidence score:
+    """Confidence score class: it has a label name, and label name have its properties and relevant value.
     for example:
         "label_name": {
             "label_value_name-1": 0.3,
@@ -146,6 +146,6 @@ class ConfidenceScore:
             if v is None or not isinstance(v, (float, int)):
                 raise TypeError(f"Confidence score value must be float or int and not empty: "
                                 f"key: {k}, value: {v}, type: {type(v)}")
-        
-        if 0 == len(self.scores.keys()):
+
+        if len(self.scores.keys()) == 0:
             raise ValueError(f"There must be at least one key in confidence score: {self.scores}")
