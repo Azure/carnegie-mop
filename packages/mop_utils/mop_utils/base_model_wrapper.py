@@ -129,6 +129,7 @@ class MopInferenceOutput:
         """
         self.__confidence_scores__ = output_dict['confidence_scores']
         self.__predicted_labels__ = output_dict['predicted_labels']
+        MopInferenceOutputValidator(self.__predicted_labels__, self.__confidence_scores__).validate()
         return self
     
     def __str__(self) -> str:
