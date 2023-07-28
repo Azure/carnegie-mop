@@ -109,26 +109,26 @@ class MopInferenceOutput:
     }
     """
     
-    def __init__(self, output_dict: dict) -> None:
+    def __init__(self, raw_data_dict: dict) -> None:
         """
         Initialize MopInferenceOutput.
-        @param output_dict: output dictionary.
-        @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
+        @param raw_data_dict: raw data dictionary.
+        @type raw_data_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
                            Refer to class output example as above.
         """
-        self.predicted_labels = output_dict.get("predicted_labels", None)
-        self.confidence_scores = output_dict.get("confidence_scores", None)
+        self.predicted_labels = raw_data_dict.get("predicted_labels", None)
+        self.confidence_scores = raw_data_dict.get("confidence_scores", None)
         if not self.__predicted_labels__ or not self.__confidence_scores__:
-            raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
+            raise ValueError(f"MopInferenceOutput from_dict: invalid raw_data_dict: {raw_data_dict}")
 
         MopInferenceOutputValidator(self).validate()
 
-    def from_dict(self, output_dict: dict) -> Any:
+    def from_dict(self, raw_data_dict: dict) -> Any:
         """
         Deprecated: This version will be deprecated.
         """
-        self.__confidence_scores__ = output_dict['confidence_scores']
-        self.__predicted_labels__ = output_dict['predicted_labels']
+        self.__confidence_scores__ = raw_data_dict['confidence_scores']
+        self.__predicted_labels__ = raw_data_dict['predicted_labels']
         MopInferenceOutputValidator(self).validate()
         return self
     
