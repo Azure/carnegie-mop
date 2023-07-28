@@ -1,5 +1,5 @@
 """
-Utils for Mop-utils.
+Utilities for Mop-utils.
 """
 
 
