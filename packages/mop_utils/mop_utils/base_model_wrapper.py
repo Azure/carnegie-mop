@@ -74,7 +74,7 @@ class MopInferenceInput:
 class InferenceInput(MopInferenceInput):
     """
     Deprecated: This version will be deprecated.
-    this is a subclass to be compatible with old version
+    this is a subclass to be compatible with old version.
     """
 
 
@@ -111,7 +111,7 @@ class MopInferenceOutput:
     
     def __init__(self, output_dict: dict) -> None:
         """
-        Initialize MopInferenceOutput
+        Initialize MopInferenceOutput.
         @param output_dict: output dictionary.
         @type output_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
                            Refer to class output example as above.
@@ -161,8 +161,8 @@ class MopInferenceOutput:
 
 class InferenceOutput(MopInferenceOutput):
     """
-    Deprecated:
-    this is a subclass to be compatible with old version
+    Deprecated: This version will be deprecated.
+    this is a subclass to be compatible with old version.
     """
 
 
@@ -192,7 +192,7 @@ class BaseModelWrapper(ABC):
    
     def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
         """
-        Optional implementation: Convert ACS text request to model inference input
+        Optional implementation: Convert ACS text request to model inference input.
         @param req: ACS text request
         @type req: TextAnalysisInput
         @return: Model inference input
@@ -202,7 +202,7 @@ class BaseModelWrapper(ABC):
 
     def convert_model_inference_output_to_acs_text_response(self, out: object) -> AcsTextResponse:
         """
-        Optional implementation: Convert model inference output to ACS text response
+        Optional implementation: Convert model inference output to ACS text response.
         @param out: Model inference output
         @type out: object
         @return: ACS text response
@@ -212,7 +212,7 @@ class BaseModelWrapper(ABC):
     
     def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
         """
-        Optional implementation: Convert ACS image request to model inference input
+        Optional implementation: Convert ACS image request to model inference input.
         @param req: ACS image request
         @type req: ImageAnalysisInput
         @return: Model inference input
@@ -222,7 +222,7 @@ class BaseModelWrapper(ABC):
     
     def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
         """
-        Optional implementation: Convert model inference output to ACS image response
+        Optional implementation: Convert model inference output to ACS image response.
         @param out: Model inference output
         @type out: object
         @return: ACS image response
