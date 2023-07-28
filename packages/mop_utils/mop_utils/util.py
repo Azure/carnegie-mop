@@ -2,8 +2,6 @@
 Mop-utils some util.
 """
 
-from typing import Dict, Union
-
 
 class ImageAnalysisInput:
     data: bytes = b''
@@ -36,39 +34,42 @@ class MopInferenceOutputValidator:
     """
     MOP inference output validator
     """
+
+    def __init__(self, mop_inference_output):
+        self.predicted_labels = mop_inference_output.predicted_labels
+        self.confidence_scores = mop_inference_output.confidence_scores
+        if not self.predicted_labels or not self.confidence_scores:
+            raise ValueError(f"Invalid predicted_labels and confidence_scores. "
+                             f"Current value: {self.confidence_scores}, {self.predicted_labels}")
     
-    def __init__(self, predicted_label: dict, confidence_scores: dict):
-        self.predicted_label = predicted_label
-        self.confidence_scores = confidence_scores
-    
-    def _if_valid_predicted_label(self):
+    def _check_predicted_label(self):
         """
            Validates label name, type and label value name, type and value type.
            @return:
            @rtype:
        """
-        if self.predicted_label:
-            for key, value in self.predicted_label.items():
-                label_name, label_values = key, value
-                if not label_name or not isinstance(label_name, str):
-                    raise TypeError(f"Label name must be type str and value must be not empty. {label_name}")
+        if self.predicted_labels:
+            for key, value in self.predicted_labels.items():
+                if not key or not isinstance(key, str):
+                    raise TypeError(f"The label name must be type str and its value must be not empty. "
+                                    f"Current value: {key}, type: {type(key)}")
             
-                if not label_values or not isinstance(label_values, dict):
-                    raise TypeError(f"Label scores must be dict: {label_values}")
+                if not value or not isinstance(value, dict):
+                    raise TypeError(f"The label scores must be dict type. Current value: {value}, type: {type(value)}")
             
-                for k, v in label_values.items():
+                for k, v in value.items():
                     if not k or not isinstance(k, str):
-                        raise TypeError(f"Key of label value should be type str and not empty: {k}")
+                        raise TypeError(f"The key should be type str and not empty. "
+                                        f"Current value: {k}, type: {type(k)}")
                 
                     if v is None or not isinstance(v, int) or v not in (1, 0):
-                        raise TypeError(f"The value of label value should be int( 1 or 0 ): "
-                                        f"key: {k}, value: {v}, type: {type(v)}")
+                        raise TypeError(f"The value should be int ( 1 or 0 ): "
+                                        f"Current key: {k}, value: {v}, type: {type(v)}")
             
-                number = len(label_values.keys())
-                if number == 0:
-                    raise ValueError(f"There must be at least one label in value: {number}")
+                if len(value.keys()) == 0:
+                    raise ValueError(f"There must be at least one label in value. Current size:  {len(value.keys())}")
             
-    def _if_valid_confidence_scores(self):
+    def _check_confidence_scores(self):
         """
             Validates label name, type and label value name, type and value type.
             @return:
@@ -94,28 +95,28 @@ class MopInferenceOutputValidator:
                 if len(scores.keys()) == 0:
                     raise ValueError(f"There must be at least one key in confidence score: {scores}")
             
-    def _if_keys_match(self):
+    def _check_keys_match(self):
         """
         Check if label_name keys match score keys
         """
-        if len(self.predicted_label.keys()) != len(self.confidence_scores.keys()):
+        if len(self.predicted_labels.keys()) != len(self.confidence_scores.keys()):
             return False
         
-        if set(self.predicted_label.keys()) != set(self.confidence_scores.keys()):
+        if set(self.predicted_labels.keys()) != set(self.confidence_scores.keys()):
             return False
         
         return True
     
-    def _if_value_keys_match(self):
+    def _check_value_keys_match(self):
         """
         Check if label_name value keys match score value keys
         """
-        if not self.predicted_label and not self.confidence_scores:
+        if not self.predicted_labels and not self.confidence_scores:
             return True
         
         for key in self.confidence_scores.keys():
             conf_score = self.confidence_scores[key]
-            pre_label = self.predicted_label.get(key, None)
+            pre_label = self.predicted_labels.get(key, None)
             conf_keys = conf_score.keys()
             pre_keys = pre_label.keys()
             if set(conf_keys) != set(pre_keys):
@@ -131,13 +132,13 @@ class MopInferenceOutputValidator:
         @rtype:
         """
         
-        self._if_valid_predicted_label()
-        self._if_valid_confidence_scores()
+        self._check_predicted_label()
+        self._check_confidence_scores()
         
-        if not self._if_keys_match():
+        if not self._check_keys_match():
             raise ValueError(f"Predicted_labels labels number should equal to scores labels number: "
-                             f"{self.predicted_label.keys()}, {self.confidence_scores.keys()}")
+                             f"{self.predicted_labels.keys()}, {self.confidence_scores.keys()}")
         
-        if not self._if_value_keys_match():
+        if not self._check_value_keys_match():
             raise ValueError(f"Predicted_labels the label value keys should match score value keys: "
-                             f"{self.confidence_scores}, {self.predicted_label}")
+                             f"{self.confidence_scores}, {self.predicted_labels}")

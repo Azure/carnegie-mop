@@ -73,7 +73,7 @@ class MopInferenceInput:
 
 class InferenceInput(MopInferenceInput):
     """
-    Deprecated:
+    Deprecated: This version will be deprecated.
     this is a subclass to be compatible with old version
     """
 
@@ -121,15 +121,15 @@ class MopInferenceOutput:
         if not self.__predicted_labels__ or not self.__confidence_scores__:
             raise ValueError(f"MopInferenceOutput from_dict: invalid output_dict: {output_dict}")
 
-        MopInferenceOutputValidator(self.__predicted_labels__, self.__confidence_scores__).validate()
+        MopInferenceOutputValidator(self).validate()
 
     def from_dict(self, output_dict: dict) -> Any:
         """
-        Deprecated
+        Deprecated: This version will be deprecated.
         """
         self.__confidence_scores__ = output_dict['confidence_scores']
         self.__predicted_labels__ = output_dict['predicted_labels']
-        MopInferenceOutputValidator(self.__predicted_labels__, self.__confidence_scores__).validate()
+        MopInferenceOutputValidator(self).validate()
         return self
     
     def __str__(self) -> str:
