@@ -193,6 +193,7 @@ class BaseModelWrapper(ABC):
     def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
         """
         Optional implementation: Convert ACS text request to model inference input.
+        It is mandatory if you want to release the model to AACS service.
         @param req: ACS text request
         @type req: TextAnalysisInput
         @return: Model inference input
@@ -203,6 +204,7 @@ class BaseModelWrapper(ABC):
     def convert_model_inference_output_to_acs_text_response(self, out: object) -> AcsTextResponse:
         """
         Optional implementation: Convert model inference output to ACS text response.
+        It is mandatory if you want to release the model to AACS service.
         @param out: Model inference output
         @type out: object
         @return: ACS text response
@@ -213,6 +215,7 @@ class BaseModelWrapper(ABC):
     def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
         """
         Optional implementation: Convert ACS image request to model inference input.
+        It is mandatory if you want to release the model to AACS service.
         @param req: ACS image request
         @type req: ImageAnalysisInput
         @return: Model inference input
@@ -223,6 +226,7 @@ class BaseModelWrapper(ABC):
     def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
         """
         Optional implementation: Convert model inference output to ACS image response.
+        It is mandatory if you want to release the model to AACS service.
         @param out: Model inference output
         @type out: object
         @return: ACS image response
