@@ -119,7 +119,7 @@ class MopInferenceOutput:
         self.predicted_labels = raw_data_dict.get("predicted_labels", None)
         self.confidence_scores = raw_data_dict.get("confidence_scores", None)
         if not self.__predicted_labels__ or not self.__confidence_scores__:
-            raise ValueError(f"MopInferenceOutput from_dict: invalid raw_data_dict: {raw_data_dict}")
+            raise ValueError(f"MopInferenceOutput: invalid raw data dict: Current value: {raw_data_dict}")
 
         MopInferenceOutputValidator(self).validate()
 
