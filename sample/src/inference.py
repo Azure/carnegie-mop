@@ -3,10 +3,10 @@ import pickle
 from typing import List, Dict
 
 import nltk
-from mop_utils.base_model_wrapper import BaseModelWrapper, InferenceInput, InferenceOutput
+from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput, MopInferenceOutput
 
 
-# from base_model_wrapper import  BaseModelWrapper, InferenceInput, InferenceOutput
+# from base_model_wrapper import  BaseModelWrapper, MopInferenceInput, MopInferenceOutput
 
 class ModelWrapper(BaseModelWrapper):
     def __init__(self) -> None:
@@ -33,15 +33,27 @@ class ModelWrapper(BaseModelWrapper):
         scores = [{'score': x[1]} for x in predicts]
         return scores
 
-    def convert_mop_input_to_model_input(self, mop_input: InferenceInput, **kwargs) -> Dict:
+    def convert_mop_input_to_model_input(self, mop_input: MopInferenceInput, **kwargs) -> Dict:
         return {"data": mop_input.text}
 
-    def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> InferenceOutput:
-        inference_output = InferenceOutput()
+    def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         customized_output = float(customized_output.get('score'))
         print(f'customized_output = {customized_output}')
-        inference_output.confidence_scores = {"identity_hate": customized_output}
-        inference_output.predicted_labels = {"identity_hate": customized_output > 0.5}
+        d = {
+            "confidence_scores": {
+                "identity_hate": {
+                    "positive": customized_output,
+                    "negative": 1 - customized_output
+                }
+            },
+            "predicted_labels": {
+                "identity_hate": {
+                    "positive": 1,
+                    "negative": 0
+                }
+            }
+        }
+        inference_output = MopInferenceOutput(d)
         return inference_output
 
 
@@ -52,7 +64,7 @@ if __name__ == "__main__":
     c_output = model_wrapper.inference(customized_input)
     print(c_output)
 
-    mop_input = InferenceInput(text="NIGGER PLEASE \n EAT A COCK, LOL HY.")
+    mop_input = MopInferenceInput(text="NIGGER PLEASE \n EAT A COCK, LOL HY.")
     customized_input = model_wrapper.convert_mop_input_to_model_input(mop_input)
     print(customized_input)
     assert mop_input.text == customized_input.get('data')
