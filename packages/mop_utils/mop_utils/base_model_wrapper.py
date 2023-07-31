@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Any
-from util import AcsTextResponse, AcsImageResponse, ImageAnalysisInput, TextAnalysisInput, MopInferenceOutputValidator
+from .util import AcsTextResponse, AcsImageResponse, ImageAnalysisInput, TextAnalysisInput, MopInferenceOutputValidator
 
 
 class MopInferenceInput:
