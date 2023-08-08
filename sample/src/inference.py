@@ -279,10 +279,8 @@ if __name__ == "__main__":
           acs_text_response.violence.harmful_score, acs_text_response.violence.severity_level)
 
     acs_image_req = ImageAnalysisInput()
-    with open("image_verify_request.json", "r") as file:
-        data = json.load(file)
-        image_data = data[0]["image"]
-        decoded_data = base64.b64decode(image_data)
+    image_data = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC'
+    decoded_data = base64.b64decode(image_data)
 
     print(decoded_data)
     acs_image_req.data = decoded_data
@@ -294,4 +292,5 @@ if __name__ == "__main__":
           acs_image_response.sexual.harmful_score, acs_image_response.sexual.severity_level,
           acs_image_response.self_harm.harmful_score, acs_image_response.self_harm.severity_level,
           acs_image_response.violence.harmful_score, acs_image_response.violence.severity_level)
+    
     
