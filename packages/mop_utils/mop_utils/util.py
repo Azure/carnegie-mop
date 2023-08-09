@@ -17,6 +17,9 @@ class AnalysisResult:
 
 
 class AcsImageResponse:
+    """
+    All four fields "hate", "self_harm", "sexual" and "violence" are required.
+    """
     hate = AnalysisResult()
     self_harm = AnalysisResult()
     sexual = AnalysisResult()
@@ -24,6 +27,9 @@ class AcsImageResponse:
 
 
 class AcsTextResponse:
+    """
+    All four fields "hate", "self_harm", "sexual" and "violence" are required.
+    """
     hate = AnalysisResult()
     self_harm = AnalysisResult()
     sexual = AnalysisResult()

@@ -106,8 +106,8 @@ class MopInferenceOutput:
         """
         Initialize MopInferenceOutput.
         @param raw_data_dict: raw data dictionary.
-        @type raw_data_dict: Dictionary which have two key: predicted_labels and confidence_scores in it.
-                           Refer to class output example as above.
+        @type raw_data_dict: A dictionary which have two keys: "predicted_labels" and "confidence_scores".
+                           Refer the class output example above.
         """
         self.predicted_labels = raw_data_dict.get("predicted_labels", None)
         self.confidence_scores = raw_data_dict.get("confidence_scores", None)
@@ -118,7 +118,7 @@ class MopInferenceOutput:
 
     def from_dict(self, raw_data_dict: dict) -> Any:
         """
-        Deprecated: This version will be deprecated.
+        Deprecated: This method will be deprecated.
         """
         self.__confidence_scores__ = raw_data_dict['confidence_scores']
         self.__predicted_labels__ = raw_data_dict['predicted_labels']
