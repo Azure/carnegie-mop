@@ -5,7 +5,7 @@ from typing import List, Dict
 
 import nltk
 from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput, MopInferenceOutput
-from mop_utils.util import TextAnalysisInput, ImageAnalysisInput, AcsTextResponse, AcsImageResponse
+from mop_utils.util import TextAnalysisInput, ImageAnalysisInput, AcsTextResponse, AcsImageResponse, AnalysisResult
 
 
 class ModelWrapper(BaseModelWrapper):
@@ -37,13 +37,14 @@ class ModelWrapper(BaseModelWrapper):
         return {"data": mop_input.text}
 
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
-        customized_output = float(customized_output.get('score'))
-        print(f'customized_output = {customized_output}')
+        probability = float(customized_output.get('score'))
+        print(f'model probability: {probability}')
+        positive = 1 if probability > 0.5 else 0
         d = {
             "confidence_scores": {
                 "identity_hate": {
-                    "positive": customized_output,
-                    "negative": 1 - customized_output
+                    "positive": positive,
+                    "negative": 1 - positive
                 }
             },
             "predicted_labels": {
@@ -76,139 +77,19 @@ class ModelWrapper(BaseModelWrapper):
         @return: ACS text response
         @rtype: AcsTextResponse
         """
-        
-        """ example:
-        model_inference_output = {
-            "violence": {
-                "scores": [
-                    0.9343945384025574,
-                    0.016118334606289865,
-                    0.024537162855267526,
-                    0.024950077757239343
-                ],
-                "class": 0
-            },
-            "self-harm": {
-                "scores": [
-                    0.9265221357345581,
-                    0.02502666786313057,
-                    0.02527506835758686,
-                    0.02317621186375618
-                ],
-                "class": 0
-            },
-            "hate": {
-                "scores": [
-                    0.1400328278541565,
-                    0.02049916982650757,
-                    0.024420715868473054,
-                    0.8150473237037659
-                ],
-                "class": 6
-            },
-            "sexual": {
-                "scores": [
-                    0.882838249206543,
-                    0.02585785463452339,
-                    0.02786555513739586,
-                    0.06343831121921539
-                ],
-                "class": 0
-            }
-        }
-        """
+      
+        score = out["score"]
+        analysis_result = AnalysisResult()
+        analysis_result.harmful_score = score
+        analysis_result.severity_level = int(score * 7)
         
         acs_text_resp = AcsTextResponse()
-        acs_text_resp.violence.harmful_score = out["violence"]["scores"][0]
-        acs_text_resp.violence.severity_level = out["violence"]['class']
+        acs_text_resp.violence = analysis_result
+        acs_text_resp.self_harm = analysis_result
+        acs_text_resp.hate = analysis_result
+        acs_text_resp.sexual = analysis_result
         
-        acs_text_resp.self_harm.harmful_score = out["self-harm"]["scores"][0]
-        acs_text_resp.self_harm.severity_level = out["self-harm"]["class"]
-        
-        acs_text_resp.hate.harmful_score = out["hate"]["scores"][0]
-        acs_text_resp.hate.severity_level = out["hate"]["class"]
-        
-        acs_text_resp.sexual.harmful_score = out["sexual"]["scores"][0]
-        acs_text_resp.sexual.severity_level = out["sexual"]["class"]
         return acs_text_resp
-
-    def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
-        """
-        Optional implementation: Convert ACS image request to model inference input.
-        But it is mandatory if you want to release the model to AACS service.
-        @param req: ACS image request
-        @type req: ImageAnalysisInput
-        @return: Model inference input
-        @rtype: object
-        """
-        encoded_data = base64.b64encode(req.data)
-        encoded_string = encoded_data.decode('utf-8')
-        return {"data": encoded_string}
-
-    def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
-        """
-        Optional implementation: Convert model inference output to ACS image response.
-        But it is mandatory if you want to release the model to AACS service.
-        @param out: Model inference output
-        @type out: object
-        @return: ACS image response
-        @rtype: AcsImageResponse
-        """
-
-        """ example:
-        model_inference_output = {
-           "violence": {
-               "scores": [
-                   0.9343945384025574,
-                   0.016118334606289865,
-                   0.024537162855267526,
-                   0.024950077757239343
-               ],
-               "class": 0
-           },
-           "self-harm": {
-               "scores": [
-                   0.9265221357345581,
-                   0.02502666786313057,
-                   0.02527506835758686,
-                   0.02317621186375618
-               ],
-               "class": 0
-           },
-           "hate": {
-               "scores": [
-                   0.1400328278541565,
-                   0.02049916982650757,
-                   0.024420715868473054,
-                   0.8150473237037659
-               ],
-               "class": 6
-           },
-           "sexual": {
-               "scores": [
-                   0.882838249206543,
-                   0.02585785463452339,
-                   0.02786555513739586,
-                   0.06343831121921539
-               ],
-               "class": 0
-           }
-       }
-       """
-        
-        acs_image_response = AcsImageResponse()
-        acs_image_response.violence.harmful_score = out["violence"]["scores"][0]
-        acs_image_response.violence.severity_level = out["violence"]["class"]
-        
-        acs_image_response.self_harm.harmful_score = out["self-harm"]["scores"][0]
-        acs_image_response.self_harm.severity_level = out["self-harm"]["class"]
-        
-        acs_image_response.hate.harmful_score = out["hate"]["scores"][0]
-        acs_image_response.hate.severity_level = out["hate"]["class"]
-        
-        acs_image_response.sexual.harmful_score = out["sexual"]["scores"][0]
-        acs_image_response.sexual.severity_level = out["sexual"]["class"]
-        return acs_image_response
 
 
 if __name__ == "__main__":
