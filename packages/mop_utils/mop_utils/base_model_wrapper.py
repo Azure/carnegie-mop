@@ -71,13 +71,6 @@ class MopInferenceInput:
         self.__images__ = images
 
 
-class InferenceInput(MopInferenceInput):
-    """
-    Deprecated: This version will be deprecated.
-    this is a subclass to be compatible with old version.
-    """
-
-
 class MopInferenceOutput:
     """
     MopInferenceOutput: output example:
@@ -157,13 +150,6 @@ class MopInferenceOutput:
     @property
     def output(self) -> Dict:
         return {'confidence_scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
-
-
-class InferenceOutput(MopInferenceOutput):
-    """
-    Deprecated: This version will be deprecated.
-    this is a subclass to be compatible with old version.
-    """
 
 
 class BaseModelWrapper(ABC):

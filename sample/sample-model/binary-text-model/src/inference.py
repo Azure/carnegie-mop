@@ -8,8 +8,6 @@ from mop_utils.base_model_wrapper import BaseModelWrapper, MopInferenceInput, Mo
 from mop_utils.util import TextAnalysisInput, ImageAnalysisInput, AcsTextResponse, AcsImageResponse
 
 
-# from base_model_wrapper import  BaseModelWrapper, MopInferenceInput, MopInferenceOutput
-
 class ModelWrapper(BaseModelWrapper):
     def __init__(self) -> None:
         super().__init__()
