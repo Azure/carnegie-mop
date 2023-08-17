@@ -172,8 +172,6 @@ You should prepare your dataset in a Blob Container as below:
 <Your Dataset Folder Name>
 │
 └─── dataset.csv     # Required
-
-
 ```
 As mentioned above, an evaluation dataset on MOP is binary. MOP supports onboarding multiple datasets at one time. Each 
 csv file should contain columns of data and one or more label columns. By create the mapping between the label name in 

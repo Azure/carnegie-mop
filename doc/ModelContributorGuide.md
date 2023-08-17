@@ -2,7 +2,7 @@
 
 MOP can help model owners to manage their model versions, detect vulnerabilities, get various testing results, and release their models to downstream responsible AI services (AACS or RAIO). 
 
-This guide will walk you through the process of onboarding your model to MOP.
+This guide will walk you through the process of onboarding your models to MOP.
 
 ## Prerequisites
 ### Understand MOP Concepts
@@ -85,7 +85,7 @@ For more details, please check [the sample model](https://github.com/Azure/carne
 ### Create a Model
 Go to [MOP portal](https://carnegie-mop.azurewebsites.net), click "Models" on the left navigation bar, and then click "Add a Model" button in the top left corner. 
 
-Filling information in the pop-up window:
+Fill in the form  in the pop-up window:
 * **Model Name**: A unique name of your model. MOP allows letters, numbers, dash and underscore ONLY allows in model name (`[A-Z a-z 0-9 -]`). **This name will be used for model management on MOP and model release to downstream services. It cannot be changed once the model is created**.
 * **Description**: A brief description of your model. It can be changed later.
 * **Team**: The team that owns the model. **It cannot be changed once the model is created.**
@@ -119,7 +119,7 @@ Filling information in the pop-up window:
 
 ## Manage Your Model
 ### Find Your Model on MOP
-Go to [MOP portal](https://carnegie-mop.azurewebsites.net), click "Models" on the left navigation bar, and then click "Add a Model" button in the top left corner. You can see a list of models, including models that you created, and models from others that you have access to view details.
+Go to [MOP portal](https://carnegie-mop.azurewebsites.net), click "Models" on the left navigation bar. You can see a list of models, including models that you created, and models from others that you have access to view details.
 
 #### Using Model Group
 MOP supports model grouping for users to store models that they want to view so that users can easily find models they are interested in. Using the dropdown list and the operation button to manage model groups.
@@ -137,7 +137,7 @@ After model group creation, you can choose the group from the dropdown list on M
 #### Using Status filter
 MOP supports model status filter for users to find models that they want to view. Using the dropdown list in the top right corner to filter models by status. The default status is _All except outdated and verifyFailed_. So you may need to change the status filter to view all models.
 
-#### Using Search
+#### Using Search box
 MOP supports model search for users to find models that they want to view. Using the search box in the top right corner to search models by model name.
 
 ### Model details
@@ -152,7 +152,7 @@ Taxonomy mapping shows the mapping between model output and system-defined taxon
 #### Model version history
 Model version history shows all versions of this model. You can view the model version details in the table and perform operations on each version.
 - Version: The version of the model.
-- **Status**: After onboarding a model, MOP will perform a series of verification steps, including deploying it as a web service (via AML MIR), to ensure a model is ready for testing. The _Status_ describes the status of the model version during the progress. There are following status:
+- **Status**: After onboarding a model, MOP will perform a series of verification steps, including deploying it as a web service (via AML MIR), to ensure a model is ready for testing. The _Status_ describes the status of the model version during the process. There are following status:
   - created: The model version is created. It is the initial status.
   - dataDownloaded: MOP has retrieved the model artifact from the model blob url.
   - environmentCreating/environmentCreated/endpointCreating/endpointCreated/deploymentCreating/deploymentCreated: 
