@@ -6,7 +6,7 @@ This guide will walk you through the process of onboarding your models to MOP.
 
 ## Prerequisites
 ### Understand MOP Concepts
-Please read [MOP Documentation](../newReadMe.md) to understand the concepts of MOP.
+Please read [MOP Documentation](../README.md) to understand the concepts of MOP.
 
 ### Azure Resource
 You need an available **Azure Storage Account** to store your model files. If you don't have one, please follow [this guide](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-portal) to create one.
