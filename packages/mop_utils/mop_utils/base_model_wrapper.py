@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional, Any
+from .util import AcsTextResponse, AcsImageResponse, ImageAnalysisInput, TextAnalysisInput, MopInferenceOutputValidator
 
 
 class MopInferenceInput:
@@ -70,20 +71,60 @@ class MopInferenceInput:
         self.__images__ = images
 
 
-class InferenceInput(MopInferenceInput):
-    '''this is a subclass to be compatible with old version'''
-
-
 class MopInferenceOutput:
-    def __init__(self, confidence_scores: Optional[Dict] = None, predicted_labels: Optional[Dict] = None) -> None:
-        self.__confidence_scores__: Dict = confidence_scores
-        self.__predicted_labels__: Dict = predicted_labels
+    """
+    MopInferenceOutput: output example:
+    {
+        "predicted_labels": {
+            "violence": {
+                "severity-1": 1,
+                "severity-2": 0,
+                "severity-3": 0
+            },
+            "hate": {
+                "sev-1": 0,
+                "sev-2": 0,
+                "sev-3": 1
+            }
+        },
+        "confidence_scores": {
+            "violence": {
+                "severity-1": 0.525,
+                "severity-2": 0,
+                "severity-3": 0.5485
+            },
+            "hate": {
+                "sev-1": 0.225,
+                "sev-2": 0.225,
+                "sev-3": 0.26544
+            }
+        }
+    }
+    """
+    
+    def __init__(self, raw_data_dict: dict) -> None:
+        """
+        Initialize MopInferenceOutput.
+        @param raw_data_dict: raw data dictionary.
+        @type raw_data_dict: A dictionary which have two keys: "predicted_labels" and "confidence_scores".
+                           Refer the class output example above.
+        """
+        self.predicted_labels = raw_data_dict.get("predicted_labels", None)
+        self.confidence_scores = raw_data_dict.get("confidence_scores", None)
+        if not self.__predicted_labels__ or not self.__confidence_scores__:
+            raise ValueError(f"MopInferenceOutput: invalid raw data dict: Current value: {raw_data_dict}")
 
-    def from_dict(self, output_dict: dict) -> Any:
-        self.__confidence_scores__ = output_dict['confidence_scores']
-        self.__predicted_labels__ = output_dict['predicted_labels']
+        MopInferenceOutputValidator(self).validate()
+
+    def from_dict(self, raw_data_dict: dict) -> Any:
+        """
+        Deprecated: This method will be deprecated.
+        """
+        self.__confidence_scores__ = raw_data_dict['confidence_scores']
+        self.__predicted_labels__ = raw_data_dict['predicted_labels']
+        MopInferenceOutputValidator(self).validate()
         return self
-
+    
     def __str__(self) -> str:
         return str(vars(self))
 
@@ -111,10 +152,6 @@ class MopInferenceOutput:
         return {'confidence_scores': self.confidence_scores, 'predicted_labels': self.predicted_labels}
 
 
-class InferenceOutput(MopInferenceOutput):
-    '''this is a subclass to be compatible with old version'''
-
-
 class BaseModelWrapper(ABC):
     def __init__(self) -> None:
         pass
@@ -138,3 +175,48 @@ class BaseModelWrapper(ABC):
     @abstractmethod
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         raise NotImplementedError("convert_model_output_to_mop_output() method is not implemented")
+   
+    def convert_acs_text_request_to_model_inference_input(self, req: TextAnalysisInput) -> object:
+        """
+        Optional implementation: Convert ACS text request to model inference input.
+        But it is mandatory if you want to release the model to AACS service.
+        @param req: ACS text request
+        @type req: TextAnalysisInput
+        @return: Model inference input
+        @rtype: object
+        """
+        pass
+
+    def convert_model_inference_output_to_acs_text_response(self, out: object) -> AcsTextResponse:
+        """
+        Optional implementation: Convert model inference output to ACS text response.
+        But it is mandatory if you want to release the model to AACS service.
+        @param out: Model inference output
+        @type out: object
+        @return: ACS text response
+        @rtype: AcsTextResponse
+        """
+        pass
+    
+    def convert_acs_image_request_to_model_inference_input(self, req: ImageAnalysisInput) -> object:
+        """
+        Optional implementation: Convert ACS image request to model inference input.
+        But it is mandatory if you want to release the model to AACS service.
+        @param req: ACS image request
+        @type req: ImageAnalysisInput
+        @return: Model inference input
+        @rtype: object
+        """
+        pass
+    
+    def convert_model_inference_output_to_acs_image_response(self, out: object) -> AcsImageResponse:
+        """
+        Optional implementation: Convert model inference output to ACS image response.
+        But it is mandatory if you want to release the model to AACS service.
+        @param out: Model inference output
+        @type out: object
+        @return: ACS image response
+        @rtype: AcsImageResponse
+        """
+        pass
+ 
