@@ -6,6 +6,9 @@ MOP performs various offline testing on models to help MOP users to better under
 
 Users may want to check/compare testing results from different angles. For example, they may want to check the testing results of a model on different tasks, or check the testing results of different models on the same task. MOP provides a flexible way to filter testing results based on different criteria.
 
+## Understand MOP Concepts
+Please read [MOP Documentation](../README.md) to understand the concepts of MOP.
+
 ## From a model perspective
 Based on the model testing option, MOP will perform load testing, evaluation testing and regression testing **in order**.
 

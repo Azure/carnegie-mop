@@ -1,345 +1,92 @@
-# Model Onboarding Pipeline (MOP) User Guide
-
+# RAI Model Onboarding Pipeline Documentation
 > **Note:** This document is a work in progress. Please feel free to contribute to it by submitting a pull request.
+> Any questions please contact [David Liang](mailto:liangze@microsoft.com).
 
 ## Overview
+- MOP link (AAD required): **[https://carnegie-mop.azurewebsites.net](https://carnegie-mop.azurewebsites.net)**
 
-This page shows the steps to onboard a model or upload a dataset to the Content Moderation Model Onboarding
-Pipeline (MOP).
+RAI Model Onboarding Pipeline (MOP) is a platform for responsible AI model onboarding. It provides **an automation pipeline to help data scientists and engineers to onboard their models** for Azure responsible AI services including Azure AI Content Safety (AACS) and RAI Orchestrator (RAIO). 
 
-A **MODEL** in MOP normally contains all necessary files to run an inference, usually including environment setup
-configuration, model checkpoints, scripts to load the checkpoint files, and other dependencies.
+For now MOP **supports classification models only**.
 
-A **DATASET** in MOP is a binary classification dataset, including a collection of data samples and a collection of labels.
+## Getting Started
+There are several concepts on MOP that you need to know before you start using it.
 
-A **DSAT case** in MOP is a specific text/image that users think are misclassified by a model.
+### Tasks
+A Task on MOP defines a classification problem. It contains the following information:
+- **Name**: A unique name for the task.
+- **Description**: A description for the task. Usually it will explain the classification problem in detail, including the business scenario, the data source, definition of labels, etc.
+- Group: The team that owns the task.
+- Created time: The time when the task is created.
+- Created by: The user who created the task.
+- **Modality name**: Modality refers to a particular way in which information is processed and stored. Now MOP supports 3 different modality: 
+  - Text: the input is a piece of text. 
+  - Image: the input is a base64 encoded image.
+  - ImageAndText: the input is a piece of text and a base64 encoded image. Images will be inserted into the text at the position of the corresponding placeholders.
+- **Taxonomy**: Taxonomy here sometimes is also called "category". It refers to the structured classification within a particular domain. Each taxonomy should be independent and mutually exclusive. MOP supports following taxonomy types:
+  - Hate
+  - Self-harm
+  - Violence
+  - Sexual
+  - Jailbreak
+  - Defensive
 
-## Upload a Model
+- **Labels**: Labels represent the classification categories. For example, if the task is to classify whether a piece of text is toxic, the labels could be `toxic` and `non-toxic`; if the task is to classify the level of toxicity, the labels could be `non-toxic`, 'slightly toxic', `toxic`, `very toxic`, and `extremely toxic`. Number of labels should be at least 2 and at most 20;
+- **Label type**: Label type defines the type of the labels. For now MOP supports 2 different label types:
+  - Categorical: each sample can have only one label; labels are independent and mutually exclusive. There should be at least 2 labels for a categorical task.
+  - Ordinal: each sample can have only one label; labels are in ascending order. There should be at least **3** labels for an ordinal task.
 
-### Prerequisites
+> To note that **only MOP administrators can create/modify the definition of a Task.**
 
-- An Azure Storage Account.
 
-### Prepare Your Model
+### Models
+A model on MOP represents a trained classification model that can be used for specific MOP task(s). Therefore, a model contributor should specify which task(s) their model can resolve. All users can be a model contributor as long as they have an available model to onboard.
 
-You should prepare your model checkpoint file(s), dependencies and loading script in a Blob Container as below:
+Model owners can sue MOP to manage versions of their models, get various testing results, and release their models to downstream responsible AI services. 
 
-```
-<Your Model Folder Name>
-│
-└───model               # Required
-│   │   model_ckpt.onnx
-│   │   model_ckpt.pkl
-│   │   ...
-│
-│───privatepkgs         # Optional
-│   │   privatepkg1.whl
-│   │   privatepkg2.whl
-│   │   ...
-│   
-└───src
-    │   inference.py        # Required
-    │   requirements.txt    # Required
-    │   settings.yml        # Required
-```
+MOP asks model contributors to organize their models (file structure, input/output contract, implementations, .etc) in a particular way, see [Model Contributor Guide](./doc/ModelContributorGuide.md) for more details.
 
-There are three folders, each of which contains different types of files that will be used for model evaluation.
+### Evaluation Datasets
+MOP stores abundant evaluation datasets for model owners to test their models. Each evaluation dataset is associated with one or more tasks. To avoid potential over-fitting, MOP will not provide the dataset content and ground truth labels of the evaluation datasets. Instead, MOP will provide the evaluation metrics of the models on the evaluation datasets.
 
-- **model**: This folder contains the model checkpoint files. The model checkpoint files can be in any format. The model
-  checkpoint files will be used to run the model evaluation.
-- **privatepkgs**: This folder contains the private packages that are required to run the model evaluation. The private
-  packages should be in the format of .whl. Notice that private package **SHOULD NOT** be inluded in `requirements.txt`.
-- **src**: This folder contains the scripts that are required to run the model evaluation. The scripts will be executed
-  to run the model evaluation.
-    - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
-      Install this [package]( https://pypi.org/project/mop-utils/#history) source code can be
-      found [here](https://github.com/Azure/carnegie-mop/tree/main/packages/mop_utils) and inherit
-      the `BaseModelWrapper` class and implement the `init`, `inference` and `inference_batch`,  `convert_model_output_to_mop_output`, `convert_mop_input_to_model_input` methods.
-    - **requirements.txt (required)**: This file contains the required packages that are used to run the model
-      evaluation.
-      The required packages will be installed before running the model evaluation. If required packages are private
-      packages, they should be uploaded in the `privatepkgs` folder.
-    - **settings.yml (optional)**: This file contains the environment setup configuration that is used to run the model
-      evaluation.
-      The environment setup configuration should be in the format of .yml.
-      It supports following settings:
-        - `dynamicBatch.enable`: Whether to enable dynamic batch. Default is false.
-        - `dynamicBatch.maxBatchSize`: The max batch size. Default is 12.
-        - `dynamicBatch.idleBatchSize`: The idle batch size. Default is 5. It should be less than or equal
-          to `dynamicBatch.maxBatchSize`.
-        - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
-
-For detailed information, please check [the sample model](https://github.com/Azure/carnegie-mop/tree/main/sample).
-
-### Online Running Environment
-
-In MOP, the running environment is ubuntu20.04. CUDA Toolkit is cuda11.6-cudnn8
-
-### Grant MOP Access to Your Model
-
-MOP uses Service Principal for authentication. Users should grant the **Storage Blob Data Reader** role to our system (
-service principal: **cm-model-onboarding-prod-sp**).
-See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal)
-for details.
-
-### Onboard Your Model
-
-#### Create a Model on MOP
-
-Go to the MOP portal, click “Models”, fill in information of your model.
-
-- **Model Name**: The name of your model. It should be unique in MOP. **It cannot be changed after the model is
-  created.**
-- **Model Description**: The description of your model. **It cannot be changed after the model is created.**
-- **Team**: The team that owns the model. **It cannot be changed after the model is created.**
-- **Processor Type**: The processor type of your model. It should be one of the following values:
-    - `CPU only`: The model is running on CPU.
-    - `GPU only`: The model is running on GPU.
-    - `Both`: The model is running on both CPU and GPU.
-- **Model Type**: The model type of your model. It should be one of the following values:
-    - `Blob`: The model is stored in a Azure Blob Container.
-- **Model Config** : The detailed configuration for your models, for example the dynamic batch information.
-    - `dynamicBatch.maxBatchSize`: The max batch size. Default is 12.
-    - `dynamicBatch.idleBatchSize`: The idle batch size. Default is 5. It should be less than or equal
-      to `dynamicBatch.maxBatchSize`.
-    - `dynamicBatch.maxBatchInterval`: The max batch interval (in second). Default is 0.002.
-- **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare
-  Your Model section.
-  _For example: https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestModel/_
-- **Version**: The version of your model. It should be unique for this model in MOP.
-- **Sample post data**: A valid iuput for model inference in original input contract. It should be a JSON string. 
-  - For example: `{"data": "This is a test input."}`, `{"image_base64": "<BASE64>", image_name: "myImage.jpg"}`
-  - Please note that the input contract should be the same as the one in your model.
+There are two types of evaluation datasets on MOP:
+- **Binary dataset**: A binary dataset contains only two labels `0` and `1`. It can be used to evaluate:
+  - Ordinal tasks: since labels for an ordinal task are in ascending order, MOP will automatically convert the ordinal labels to multiple set of binary labels and generate corresponding evaluation results. 
   
-- **Model Taxonomy**: All supported taxonomies of the model. **This setting cannot be changed after the model is
-  created.**
-- **Taxonomy Mapping**: The mapping between the system-defined taxonomy and the model output. **This setting cannot be
-  changed after the model is created.**
-  ![img_6.png](img_6.png)
+    For example, if the ordinal labels are `0`, `1`, `2`, `3`, MOP will convert them to:
+    - `0` vs `1, 2, 3`
+    - `0, 1` vs `2, 3`
+    - `0, 1, 2` vs `3`
+    
+    MOP will generate (three sets of) evaluation results for each set of binary labels.
+  - Categorical task with 2 labels `0` and `1`: MOP will generate evaluation results for the binary labels `0` and `1`.
+- **Multi-label dataset**: A multi-label dataset contains at least two labels. It can be used to evaluate:
+  - Categorical tasks with 2 or more labels: The labels in the dataset should be a subset (or equal to) of the labels of the task. MOP will generate evaluation results for each label in the dataset.
 
-#### TSG For Onboarding Model
+Dataset contributors can upload their datasets to MOP by following the [Dataset Contributor Guide](./doc/DatasetContributorGuide.md).
 
-1. Verify the requirments.txt locally using Conda
-    - Make sure [Conda](https://conda.io/projects/conda/en/stable/user-guide/install/download.html) is downloaded.
-    - Put [tool](verify_conda.bat) on your local directory where `src` and `privatepkgs` folder is put.
-    - On windows, in the directory where `verify_conda.bat` located,
-      run `./verify_conda.bat environment=<envrionment-name> python=<version> pip=<pip-version>`, for
-      example, `./verify_conda.bat mop-env 3.9 23.0.1 `
-    - If you encounter error, you need to fix packages in `requirements.txt` according. For example, there might be some
-      package confliction.
-2. Run `inference.py` locally on the environment you created.
+### DSAT Cases
+DSAT stands for "Dissatisfaction". DSAT cases are usually collected from the downstream responsible AI services. They are the cases that the downstream responsible AI services are not satisfied with the model's performance. Each case is associated with a task. It contains information including the input, trace id, the ground truth label and other information that can help model owners to debug their models. Please refer to [DSAT Case Contributor Guide](./DSATCaseContributorGuide.md) for more details.
 
-#### Model Onboarding state
+## Role-based documentation
+If you are a model contributor and want to onboard your model to MOP, please refer to [Model Contributor Guide](./doc/ModelContributorGuide.md).
 
-There are several state for the model onboarding process.
-- **created**: The model onboarding task is ready to be triggered. The next state is dataDownloaded. If the final state is verifyFailed, we will retry the logic, so the created state will show again.
-- **dataDownloaded**: The data on blob is downloaded successfully. The expected next state is endpointCreating. This process may take 1 - 30 minutes, depending on the file size and distance between the blob and our server.
-- **endpointCreating**: The endpoint in the backend is creating. The expected next state is deploymentCreating. This process may take no more than 10 minutes.
-- **deploymentCreating**: The deployment is creating in the backend. This process may take 10 to no more than 2 hours. Generally, it take around 10-15 minutes.
-- **verified**: This status show that the model you onboard is deployed successfully in the backend.
-- **verifyFailed**: This status show that the model you onboard is not deployed successfuly in the backend. For the failed reason, you could click on the **details** button.
+If you are a dataset contributor and want to upload your dataset to MOP, please refer to [Dataset Contributor Guide](./doc/DatasetContributorGuide.md).
 
-#### Connect Your Models to One or More Tasks
+If you want to provide DSAT cases and track its resolution, please refer to [DSAT Case Contributor Guide](./DSATCaseContributorGuide.md).
 
-Any time after model creation, you can connect your model to one or more tasks. Only models that are connected to a task
-can be used to evaluated by MOP.
-If you cannot find a proper task, please contact the MOP team
-via **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
-and we will help you with it.
+If you are a downstream responsible AI service admin and want to use MOP to track models that are released to your service, please refer to [Downstream Responsible AI Service Admin Guide](./DownstreamResponsibleAIServiceAdminGuide.md).
 
-#### Update Your Model
+If you want to go through model testing results in general, please refer to [Model Testing Results Guide](./doc/ModelTestingResults.md).
 
-You can update your model by creating a new version of the model. Go to the MOP portal, click “Models”, click the model
-you want to update, click “Upgrade Version”, fill in information of your model.
-
-- **Processor Type**: The processor type of your model.
-- **Model Type**: The model type of your model.
-- **Model url**: the url of virtual directory in your container that contains those three “folders” mentioned in Prepare
-  Your Model section.
-- **Version**: The version of your model. It should be unique for this model in MOP.
-
-## Upload a Dataset
-
-### Prerequisites
-
-- An Azure Storage Account.
-
-### Prepare Your Dataset
-
-You should prepare your dataset in a Blob Container as below:
-
-```
-<Your Dataset Folder Name>
-│
-└─── dataset.csv     # Required
-```
-As mentioned above, an evaluation dataset on MOP is binary. MOP supports onboarding multiple datasets at one time. Each 
-csv file should contain columns of data and one or more label columns. By create the mapping between the label name in 
-the csv file and the dataset name on MOP, **MOP will help split one csv file to multiple binary datasets. The dataset 
-name should be unique in MOP ,and it cannot be changed**. 
-
-For different modalities, we have different format requirements for the dataset file. 
-
-Please visit **[sample datasets](https://github.com/Azure/carnegie-mop/tree/david/dev/sample/dataset)** for more details.
-
-#### Text
-
-- **dataset.csv**:
-    - Encoded using UTF-8 with no BOM (Byte Order Mark).
-    - Each dataset.csv should have a data column with the header "text". Each cell under the data column should be a sample text.
-    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
-        - `0`: The corresponding sample is negative.
-        - `1`: The corresponding sample is positive.
-    - Make sure there is **no duplicate header name** in the csv file.
-    - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
-    - All columns should have the same number of rows.
-    - **No null/empty/NaN values are allowed.**
-    - Using “\t” as delimiter.
-
-#### Image
-
-- **dataset.csv**:
-    - Four columns with headers "base64_image", "file_name", "image_width_pixels", "image_height_pixels". 
-      Values for these columns represents sample images in the dataset.
-    - The content of column "base64_image" should be the base64 encoded string of the image.
-    - The content of column " file_name " should include file name extension.
-    - The content of column "image_width_pixels" and "image_height_pixels" should be positive integer.
-    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
-        - `0`: The corresponding sample is negative.
-        - `1`: The corresponding sample is positive.
-    - Make sure there is **no duplicate header name** in the csv file.
-    - Each cell (except for headers) should be a string using UTF-8 with no BOM (Byte Order Mark).
-    - All columns should have the same number of rows.
-    - **No null/empty/NaN values are allowed**.
-    - Using “\t” as delimiter.
-
-#### ImageAndText
-
-- **dataset.csv**:
-    - One column with header "text", representing the text of sample.
-    - The content of text column should be a string using UTF-8.
-    - **Up to 20 placeholders** in format `##{image_0}, ##{image_1}, ..., ##{image_19}` are allowed in the text. Placeholders
-in one text should be in order (from 0) and should not be duplicated. **Text without placeholders is also allowed.**
-    - **Up to 20 columns** with header "image_0", "image_1", ..., "image_19", representing the images of sample. 
-    - The content of images columns should be the base64 encoded string of an image.
-    - Image columns should be in order (from 0) and consecutive.
-    - One or more label columns with customized header. Each cell under each label column should be one of the following values:
-        - `0`: The corresponding sample is negative.
-        - `1`: The corresponding sample is positive.
-    - Make sure there is **no duplicate header name** in the csv file.
-    - All columns should have the same number of rows.
-    - Using “\t” as delimiter.
-
-### Grant MOP Access to Your Dataset
-
-MOP uses Service Principal for authentication.
-Users should grant the **Storage Blob Data Reader** role to our system (service principal: **
-cm-model-onboarding-prod-sp**).
-See [Azure RBAC documentation](https://learn.microsoft.com/en-us/azure/role-based-access-control/conditions-role-assignments-portal)
-for details.
-
-### Onboard Your Dataset
-
-#### Create a Dataset on MOP
-
-Go to the MOP portal, click “Evaluation Datasets” -> ”Add a Dataset”, fill in information of your dataset.
-- **Dataset modality**: The modality of your dataset. It should be one of the following values:
-    - `Text`: The dataset is a text dataset.
-    - `Image`: The dataset is an image dataset.
-    - `ImageAndText`: The dataset is an image and text dataset. Each sample contains one text and one or more images.
-- **Team**: The team that owns the dataset. **It cannot be changed after the dataset is created.**
-- **Source type**: The source type of your dataset. It should be one of the following values:
-    - `Blob`: The dataset is stored in a Azure Blob Container.
-- **Dataset url**: the url of virtual directory in your container that contains dataset.csv mentioned in Prepare Your
-  Dataset section.
-  For example: _https://myTestStorageAccount.blob.core.windows.net/myTestContainer/myTestdata/_
-- **Language** (for text datasets only): represent the language of datasets.
-
-by mapping the label name in the csv file and the dataset name on MOP, MOP will help split one csv file to multiple 
-binary datasets according to the number of Label Mapping that you create.
-- **Label**: The label name in the csv file.
-- **Dataset name**: The name of your dataset. It should be unique in MOP. **It cannot be changed after the dataset is
-  created.**
-- **Connected task**: MOP requires you to connect your dataset to a task. Any time after dataset upload, you can change to connect to a new task. If you cannot find a proper task, please contact the MOP team via
-**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**
-,
-and we will help you with it.
-- **Description**: The description of your dataset.
-
-### Dataset evaluation 
-How to trigger evaluation?
-There are two ways to trigger evaluation.
-- Once a model is onboared successfuly, all the datasets bound to the task will be evaluated.
-- Once a new dataset is bound to the task, all models will be evaluated. One thing to mention that, if the model is very old, onboarded 1 week ago, the evaluation will not be run. You will see the status as EXPIRED.
-
-
-## Upload a DSAT case
-
-### Prerequisites
-
-- The **content** (text or image) of the case
-- The **traceId** that we can use to trace the case in the system that you find the case.
-
-### Create a DSAT case on MOP
-
-- Go to the MOP portal, click “DSAT” tab on the left side, and then click “Create a case”.
-- Select the modality and the task(s) you think your case should belong to. 
-- Fill in the information:
-  - Content: For images, you can upload you image file. For text, you can input your text content.
-    - Note: There might be sensitive content in the case, MOP allows h**istorical reviewers ONLY** of the case to access the content.
-  - Description: The description of your case.
-  - TraceId: The traceId that we can use to trace the case in the system that you find the case. It can be a correlationId, a transactionId, or any other Id that can help us to trace the case.
-  - Expected result: The expected result of your case. It should be one of the following values:
-    - 0: You think the case does NOT contain harmful content for the specified tasks (the case is a **false positive**)
-    - 1: You think the case does contain harmful content for the specified tasks (the case is a **false negative**)
-  - Assignee: the next reviewer that you think should review the case.
-  - Comment: Any other information that you think is helpful for the reviewer to review the case.
-  - Tags: Ang tags you want to add to the case. Customized tags are allowed.
-- Click “Submit” to submit the case.
-
-Once it is created, you can find your case on the top of the page in DSAT tab.
-
-
-### Review the case
-The current reviewer can get the detailed content of the case and review it. The reviewer can also add comments to the case. There are several actions to a case:
-- **Assign**: Assign the case to another reviewer.
-- **Confirm**: Confirm the case is actually a DSAT case. The one who confirms the case will be responsible for its resolution.
-- **Fixed**: Confirm a case is fixed. The case will be closed and will not be reviewed anymore.
-- **Close**: Close the case if the current reviewer thinks it is not a DSAT case. The case will be closed and will not be reviewed anymore.
-- **Reopen**: Reopen the case if the case submitter thinks it is a DSAT case and closed incorrectly. The case will be reopened and will be reviewed again.
-
-### Regression test
-When onboarding a model, the model contributor can choose to perform regression test on the model. MOP will automatically trigger regression test on the DSAT cases that are bound to the task(s) that the model is bound to. The regression test result will be shown on the model detail page.
-
-
-## Q & A
-
+## FAQ
 ### Q: What metrics does MOP use for model evaluation?
-
-A: Basically all models and datasets in MOP is binary. Therefore, we use some popular binary classification metrics to
-evaluate the model quality.
-
 - Precision: tp / (tp + fp)
-
 - Recall: tp / (tp + fn)
-
 - F1_score: 2 * (precision * recall) / (precision + recall)
+- Averaging methods: macro-average, micro-average, weighted-average
 
-- AUC: Area Under (ROC) Curve
-
-- PRAUC: Area Under (Precision-Recall) Curve
-
-- Best_f1_score: With the change of threshold, the maximum f1_score of the model on a dataset.
-
-- Best_presision: The precision score _when_ we get the best f1_score.
-
-- Best_recall: The recall score _when_ we get the best f1_score.
-
-- Best_threshold: The threshold _when_ we get the best f1_score.
-
-If we get multiple best_f1_score, we will use the precision/recall/threshold of a best_f1_score that has the **highest
-recall score** as the best_precision/best_recall/best_threshold.
-
+<!--
 ### Q: How to calculate the average rank percentile of a metric?
 
 A: For a version of a model (i.e. a model revision), MOP will evaluate it on all the datasets connected to a task.
@@ -371,6 +118,7 @@ On dataset D2, M1 has the highest f1_score (out of 3 model revisions), so the ra
 On dataset D3, M1 has the second highest f1_score (out of 3 model revisions), so the rank percentile D3 is 2/3 = 0.67;
 
 The average rank percentile of f1_score for M1 is (0.67 + 0.33 + 0.67) / 3 = 55%.
+-->
 
 ### Q: How to do the load test?
 
@@ -399,12 +147,12 @@ If you are the model owner, and you cannot see the expected evaluation results, 
 **[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
 
 ### Q: Why do I fail to install mop-utils package?
-The package mop-utils depends on python which version is no lower than than 3.8.
+The package mop-utils depends on python which version is no lower than 3.8.
 
 ### Q: Why the model onboarding status is verifyFailed？
-- 1. check provided error message. 
-- 2. check logs to get detailed error message and update a new model revision to fix the problem.
-- 3. check whether your packages are right using the conda_verify.bat tool. Note, your private package should be no large then 2.5G.
+- check provided error message. 
+- check logs to get detailed error message and update a new model revision to fix the problem.
+- check whether your packages are right using the conda_verify.bat tool. Note, your private package should be no large then 2.5G.
 
 ### Q: What is the difference between the load test (perRPS) and load test (perConcurrency)?
 - **perRPS**: 
