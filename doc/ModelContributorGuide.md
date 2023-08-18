@@ -50,7 +50,7 @@ This folder contains the private packages that are required to run the model eva
 #### /src
 This folder contains the scripts and configuration files that are required to run the model.
 - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
-  - Install the **mop-util** package: `pip install mop-utils>=2.0` ([source code](https://github.com/Azure/carnegie-mop/tree/main/packages/mop_utils))
+  - Install the **mop-util** package: `pip install mop-utils>=2.0` ([source code](../packages/mop_utils))
   - Inherit the `BaseModelWrapper` class from `mop_utils.base_model_wrapper` and implement the following methods:
     - `init`: Load the model checkpoint files.
     - `inference`: Run the model evaluation for a single input.
@@ -79,7 +79,7 @@ This folder contains the scripts and configuration files that are required to ru
   > If you encounter error, you need to fix packages in `requirements.txt` according. For example, there might be some
       package conflict.
 
-For more details, please check [the sample model](https://github.com/Azure/carnegie-mop/tree/main/sample).
+For more details, please check [the sample model](./sample/).
 
 ## Onboard Your Model
 ### Create a Model
@@ -206,4 +206,4 @@ Go to Model detail -> Model history. Select the model version that you want to d
 In Model list page, select the model that you want to delete and click the _Delete model_ button. If you delete a model, all testing results of all versions of this model will be deleted as well.
 
 ## Model Testing results
-See [Model Testing results](./ModelTestingResults.md).
+See [Model Testing results](./doc/ModelTestingResults.md).

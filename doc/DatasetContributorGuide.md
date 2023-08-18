@@ -27,7 +27,7 @@ The dataset file should be in csv format. Each csv file should contain data colu
 
 For different modalities, we have different format requirements for the dataset file. 
 
-Please visit **[sample datasets](https://github.com/Azure/carnegie-mop/tree/david/dev/sample/dataset)** for more details.
+Please visit **[sample datasets](../sample/dataset)** for more details.
 
 #### Text
 - The csv file name should be **dataset.csv**.
@@ -146,4 +146,4 @@ Click the dataset name to view the metadata of the dataset. The metadata include
 Click the `Update bound task` button to update the tasks that this dataset will be used for. You can select tasks from the dropdown list. The tasks are filtered based on the label type and label size of the dataset. Your current operation will cover the existing tasks that this dataset is bound to.
 
 ## View Evaluation Metrics on MOP
-See [Model Testing results](./ModelTestingResults.md).
+See [Model Testing results](./doc/ModelTestingResults.md).
