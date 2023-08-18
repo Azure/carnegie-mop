@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='mop_utils',
-    version='1.8',
+    version='2.0',
     description='Utility SDK for RAI Model Onboarding Pipeline (MOP) model contributor.',
     packages=['mop_utils'],
     package_dir={'mop_utils': './mop_utils'},

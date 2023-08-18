@@ -165,9 +165,9 @@ if __name__ == "__main__":
 
     dynamic_batch = {
         'enable': True,
-        'maxBatchSize': 12,
-        'idleBatchSize': 3,
-        'maxBatchInterval': 0.2
+        'max_batch_size': 12,
+        'idle_batch_size': 3,
+        'max_batch_interval': 0.2
     }
 
     mop_init(model_root, dynamic_batch)
