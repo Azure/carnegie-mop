@@ -151,6 +151,8 @@ def build_response(inference_result: any) -> any:
         return json.loads(output_str)
     return inference_result
 
+def get_model_wrapper():
+    return inference_wrapper
 
 if __name__ == "__main__":
     model_root = "D:\code\carnegie-mop\sample\model"
