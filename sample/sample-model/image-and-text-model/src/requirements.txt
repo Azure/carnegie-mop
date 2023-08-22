@@ -1,0 +1,12 @@
+Pillow==9.4.0
+PyYAML>=6.0
+dill==0.3.6
+inference-schema[numpy-support]==1.5.0
+joblib==1.2.0
+mop-utils==2.0
+nltk==3.7
+numpy==1.22.0
+pyraisdk==0.3.2
+scikit-learn==1.1.3
+scipy==1.10.0
+xgboost==1.7.1

@@ -1,0 +1,8 @@
+dynamicBatch:
+  enable: False
+  maxBatchSize: 12
+  idleBatchSize: 5
+  maxBatchInterval: 0.002
+env:
+  python: 3.8.10
+  pip: 22.3.1
