@@ -55,7 +55,7 @@ This folder contains the scripts and configuration files that are required to ru
     - `init`: Load the model checkpoint files.
     - `inference`: Run the model evaluation for a single input.
     - `inference_batch`: Run the model evaluation for a batch of inputs.
-    - `convert_model_output_to_mop_output`: Convert the model output to MOP output. **Note that the label in the output should be the same as the labels in the tasks that your model connect to [later](doc/ModelContributorGuide.md:105).**
+    - `convert_model_output_to_mop_output`: Convert the model output to MOP output. **Note that the label in the output should be the same as the labels in the tasks that your model connect to [later](ModelContributorGuide.md:105).**
     - `convert_mop_input_to_model_input`: Convert the MOP input to model input.
     - `convert_acs_text_request_to_model_inference_input`: (optional) Convert the ACS text request to model inference input.
     - `convert_model_inference_output_to_acs_text_response`: (optional) Convert the model inference output to ACS text response.
