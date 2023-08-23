@@ -1,0 +1,165 @@
+Model Release Gating (for AACS) on MOP
+
+Goal and non-goal
+This document describes the architecture and detailed system design / necessary changes of release gating feature on RAI Model Onboarding Pipeline (MOP) to guide the development.
+
+Goal
+The main goal of this feature is to provide necessary testing results and gating conditions for model release process. Users who want to trigger/review model release can refer to the model testing results. Besides, MOP will highlight the metrics that do not meet the gating conditions.
+Non-goal
+The release gating feature will not change the current (AACS) model release process. The gating will not “actually” block the release process.
+Scope
+The necessary changes are as follows:
+•	Dataset review before it is used for evaluation.
+•	Model onboarding using simplified configuration.
+•	Golden dataset evaluation testing.
+•	Release gating condition
+
+Overview
+Testing Metrics
+
+In this sprint, MOP will support four kinds of testing for models, and each testing will have several metrics.
+
+Evaluation testing
+
+Evaluation testing is performed against the evaluation datasets on MOP. The metrics are different according to the tasks that a model connects with.
+
+Ordinal tasks
+In ordinal tasks, each class(label) is independent of each other, but the order of the classes is important. For example, the classes are “bad”, “normal”, “good”, and the order is “bad” < “normal” < “good”.
+
+MOP partitions the classes into two groups according to the order, and the metrics are calculated for each group. The metrics are classic binary classification metrics, such as confusion matrix, precision, recall and F1 score.
+
+MOP iterates all partition methods and their corresponding metrics.
+
+Example:
+A ordinal task has 3 labels(classes): “bad”, “normal”, “good”. The order is “bad” < “normal” < “good”. MOP will partition the labels into two groups: “bad” and “normal” + “good”. The metrics are calculated for each group. The metrics are classic binary classification metrics, such as confusion matrix, precision, recall and F1 score.
+
+Partition 1: “bad” vs “normal” + “good”
+
+Partition 2: “bad” + “normal” vs “good”
+
+Categorical Task
+In categorical tasks, each class(label) is independent of each other, and the order of the classes is not important. For example, the classes are “cat”, “dog”, “bird”.
+
+MOP provides classic multi-class classification metrics, such as confusion matrix, precision, recall and F1 score.
+Example:
+A categorical task has 3 labels(classes): “cat”, “dog”, “bird”. MOP will calculate the metrics as follows:
+
+Load Testing
+After a model is verified by MOP, MOP will deploy it as a single-instance service and perform load testing against this service according to the load test option of the model revision.
+Per-Concurrency
+MOP gradually increases the client number starting from 1. For each client, it sends requests and receives responses using a single thread. See documentation for details.
+The testing results are illustrated as several charts. The x-axis is the client number, and the y-axis is the corresponding metric value, including:
+Per-RPS
+MOP gradually increases the target RPS starting from 1. MOP uses python async mechanism to control the target RPS. See documentation for details.
+
+Golden Dataset Evaluation
+For each task, MOP will have a dataset that stores trivial cases. A golden dataset is a special evaluation dataset, so the evaluation metrics will contain all the metrics of the evaluation testing.
+
+
+Detailed Design
+This section describes the detailed design changes of the service by features.
+
+Dataset – Task Binding Process
+Since MOP’s primary role is gating model release on testing results, the quality of evaluation datasets will have significant impact on the testing results. Therefore, MOP asks task owner to review the evaluation datasets before they are used for evaluation testing.
+The dataset – task binding process is as follows:
+1. When a user creates a dataset, they should assign task(s) to the dataset.
+2. If the dataset is verified by MOP, the corresponding task owner will receive a notification email.
+3. The task owner should review the dataset and decide whether to use it for evaluation testing (operate on MOP portal -> Task -> Task Connection Request).
+4. Task owner/dataset owner can add more tasks to the dataset if the dataset has been verified by MOP.
+
+
+
+Since MOP’s primary role is gating model release on testing results,
+
+Model Onboarding Default Configuration
+Most MOP usage scenarios are for testing or PoC. Therefore, MOP will provide a default configuration for model onboarding to simplify the onboarding process. Some of these configurations will also be hidden on UI, and MOP users can change them by clicking the "Advanced setting" button.
+The default configuration is as follows (the * mark means the configuration is in the advanced setting; ** mark means the configuration is hidden on UI):
+- Model name:  <username with only letters>-model-<random string of 4 letters>
+- Description: "This model is created by <username> on MOP on <date>"
+- (*) Model type
+- Model version: give a recommendation based on the lastest model version of the same model name.
+    v1.0.0 -> v1.0.1
+    1.0.0 -> 1.0.1
+    v1 -> v2
+    1 -> 2
+    else: use date such as 2023-01-01
+- Version Note: "This version for model <model name> is created by <username> on MOP on <date>"
+- (**) Sample post data: MOP will fill this field while build the image.
+- (*) Model configuration:
+    - Instance Type: Standard_F4s_v2
+    - Gunicorn Worker Number: 1
+    - Gunicorn Thread Number: 8
+    - Enable dynamic batch: True
+    - Max batch size: 12
+    - Idle batch size: 3
+    - Max batch interval (in second): 0.002
+- (*) Enable regression testing: True
+- (*) Load test option: per-concurrency
+
+
+Quality Evaluation Testing
+Load Testing
+Regression Testing on DSAT cases
+Regression Testing on Golden Dataset
+Model Releasing Process Adaptation
+	Gating Condition
+	Release creating page change
+
+Release gating condition setting
+There are multiple tests on MOP, and we will get multiple results. Therefore, there will be multiple rules corresponding to the test method. We will discuss different scenarios (evaluation testing, load testing, regression testing, golden dataset testing) with different task types (ordinal/categorical).
+Evaluation Testing
+Categorical tasks
+Pattern 1: [Any | All | Specific <DATASET_NAME>]  dataset +[macro | micro | weighted | specific <LABEL>] label + [F1 | Precision | Recall] + [> | < | in] + [<THRESHOLD> | <RANGE>]
+e.g.
+Any dataset macro label F1 > 0.8
+All dataset micro label Precision < 0.8
+Specific My_first_dataset weighted label Recall in [0.8, 0.9]
+Specific My_first_dataset Severity_6 label Recall > 0.8
+Pattern 2: [Any | All | Specific <DATASET_NAME>]  dataset +[macro | micro | weighted | specific <LABEL>] label + [F1 | Precision | Recall] / same metric from previous release in [<PERCENTAGE_RANGE>]
+e.g.
+Any dataset macro label F1 / same metric from previous release in [0.8, 1.2]
+All dataset micro label Precision / same metric from previous release in [1.0, 1.2]
+Specific My_first_dataset weighted label Recall / same metric from previous release in [0.9, 1.5]
+Specific My_first_dataset Severity_6 label Recall / same metric from previous release in [0.8, +∞)]
+
+Categorical tasks
+Pattern 1: [Any | All | Specific <DATASET_NAME>] dataset + [All | Any | Specific <Partition>] partition + [F1 | Precision | Recall] + [> | < | in] + [<THRESHOLD> | <RANGE>]
+e.g.
+Any dataset All partition F1 > 0.8
+All dataset Any partition Precision < 0.8
+Specific My_first_dataset Specific [l1 | l2 and l3] Recall in [0.8, 0.9]
+
+Pattern 2: [Any | All | Specific <DATASET_NAME>] dataset + [All | Any | Specific <Partition>] partition + [F1 | Precision | Recall] / same metric from previous release in [<PERCENTAGE_RANGE>]
+e.g.
+Any dataset All partition F1 / same metric from previous release in [0.8, 1.2]
+All dataset Any partition Precision / same metric from previous release in [1.0, 1.2]
+Specific My_first_dataset Specific [l1 | l2 and l3] Recall / same metric from previous release in [0.9, 1.5]
+Specific My_first_dataset Specific [l1 | l2 and l3] Recall / same metric from previous release in [0.8, +∞)]
+
+Load Testing
+
+
+Pattern 1: for MAX_NO_ERROR_METRIC
+[Any Load Test Option | Per-Concurrency | Per-RPS] + [actual RPS | latency | resource utilization] + [> | < | in] + [<THRESHOLD> | <RANGE>]
+e.g.
+Any Load Test Option actual RPS > 100
+Per-Concurrency p99 latency < 100
+Per-RPS resource utilization in [0.8, 0.9]
+
+Pattern 2:
+When [Actual RPS] == [<THRESHOLD>], [latency | resource utilization] should be [> | < | in] [<THRESHOLD> | <RANGE>]
+e.g.
+When Actual RPS == 100, latency < 100
+When Actual RPS == 100, resource utilization in [0.8, 0.9]
+
+Database Schema Changes
+
+API Changes
+UI Prototype
+Open Questions
+Appendix
+MOP components
+
+
+
+
