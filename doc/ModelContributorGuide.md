@@ -50,7 +50,7 @@ This folder contains the private packages that are required to run the model eva
 #### /src
 This folder contains the scripts and configuration files that are required to run the model.
 - **inference.py (required)**: This script is used to load the model checkpoint files and run the model evaluation.
-  - Install the **mop-util** package: `pip install mop-utils>=2.0` ([source code](../packages/mop_utils))
+  - Install the **mop-util** package: `pip install mop-utils==2.0` ([source code](../packages/mop_utils))
   - Inherit the `BaseModelWrapper` class from `mop_utils.base_model_wrapper` and implement the following methods:
     - `init`: Load the model checkpoint files.
     - `inference`: Run the model evaluation for a single input.
