@@ -55,7 +55,7 @@ This folder contains the scripts and configuration files that are required to ru
     - `init`: Load the model checkpoint files.
     - `inference`: Run the model evaluation for a single input.
     - `inference_batch`: Run the model evaluation for a batch of inputs.
-    - `convert_model_output_to_mop_output`: Convert the model output to MOP output.
+    - `convert_model_output_to_mop_output`: Convert the model output to MOP output. **Note that the label in the output should be the same as the labels in the tasks that your model connect to [later](./ModelContributorGuide.md#create-a-model).**
     - `convert_mop_input_to_model_input`: Convert the MOP input to model input.
     - `convert_acs_text_request_to_model_inference_input`: (optional) Convert the ACS text request to model inference input.
     - `convert_model_inference_output_to_acs_text_response`: (optional) Convert the model inference output to ACS text response.
@@ -110,7 +110,7 @@ Fill in the form  in the pop-up window:
 * **Enable regression test**: MOP will store DSAT cases from (downstream service's) users. These cases are valuable for model quality evaluation and improvement. Each DSAT case will be connected to a task. If you choose to enable regression test, MOP will run the model evaluation against these DSAT cases and report the model performance per task. **It cannot be changed once the model is created.**
   > Only models with regression results can be used for model release.
 
-* **Load test option**: MOP provides two different strategies for load test: adjusting the connection number from client side and adjusting the request per second sent from client side. You can choose one of them based on your requirement. See [Load Test difference](#load-test) for more details.
+* **Load test option**: MOP provides two different strategies for load test: adjusting the connection number from client side and adjusting the request per second sent from client side. You can choose one of them based on your requirement. See [Load Test difference](../README.md:157) for more details.
   
   As for the payload, MOP will use maximum payload for testing, and it cannot be changed, so that the model can be tested with the worst case and the results for different models can be compared. Payload details are different per modality:
     - Text: a piece of text with about 1000 characters.
