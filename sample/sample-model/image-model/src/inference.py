@@ -19,8 +19,6 @@ class ModelWrapper(BaseModelWrapper):
         nltk.download('wordnet')
         nltk.download('omw-1.4')
         print(model_root)
-        #self.model = pickle.load(open(model_root + '/xgboost.pkl', 'rb'))
-        #self.tokenizer = pickle.load(open(model_root + '/tokenizer.pkl', 'rb'))
     
     def mock_inference(self, item: Dict) -> Dict:
         """
@@ -74,6 +72,7 @@ class ModelWrapper(BaseModelWrapper):
         MopInferenceOutput: mop-utils inference output.
 
         """
+        
         width = customized_output["width"]
         height = customized_output["height"]
         image_format = customized_output["format"]
