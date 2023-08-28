@@ -21,6 +21,32 @@ class ModelWrapper(BaseModelWrapper):
         nltk.download('omw-1.4')
         print(model_root)
     
+    def mock_inference(self, item: Dict) -> Dict:
+        """
+         It's a mock inference function: write your own inference logic.
+         @param item: A dictionary which have a key named 'images'.
+         @type item: Dictionary
+         @return: Inference score.
+         @rtype: Dictionary
+        """
+        
+        images = item["images"]
+        text: str = item["text"]
+        length = len(images)
+        for i in range(0, length):
+            rep_str = '##{image_%d}' % i
+            text = text.replace(rep_str, images[i])
+    
+        img_idx = random.randint(0, length - 1)
+        image_data = base64.b64decode(images[img_idx])
+        image_stream = io.BytesIO(image_data)
+    
+        image = Image.open(image_stream)
+        width, height = image.size
+        image_format = image.format
+    
+        return {"width": width, "height": height, "format": image_format}
+    
     def inference(self, item: Dict) -> Dict:
         """
         Model Inference
@@ -29,22 +55,7 @@ class ModelWrapper(BaseModelWrapper):
         @return: Inference score.
         @rtype: Dictionary
         """
-        images = item["images"]
-        text: str = item["text"]
-        length = len(images)
-        for i in range(0, length):
-            rep_str = '##{image_%d}' % i
-            text = text.replace(rep_str, images[i])
-        
-        img_idx = random.randint(0, length - 1)
-        image_data = base64.b64decode(images[img_idx])
-        image_stream = io.BytesIO(image_data)
-        
-        image = Image.open(image_stream)
-        width, height = image.size
-        image_format = image.format
-        
-        return {"width": width, "height": height, "format": image_format}
+        return self.mock_inference(item)
     
     def inference_batch(self, items: List[Dict]) -> List[Dict]:
         return [self.inference(i) for i in items]
@@ -55,6 +66,18 @@ class ModelWrapper(BaseModelWrapper):
         return {"images": images, "text": text}
     
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
+        """
+         Example function to convert model output to mop-utils output. Write your own logic.
+         Parameters
+         ----------
+         customized_output : your model inference output. It's a dictionary.
+         kwargs : other keyword parameters may use by mop-utils
+
+         Returns
+         -------
+         MopInferenceOutput: mop-utils inference output.
+         """
+        
         width = customized_output["width"]
         height = customized_output["height"]
         image_format = customized_output["format"]
