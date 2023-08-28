@@ -24,7 +24,7 @@ class ModelWrapper(BaseModelWrapper):
     def inference(self, item: Dict) -> Dict:
         """
         Model Inference
-        @param item: A dictionary which have a key named 'data'.
+        @param item: A dictionary which have a key named 'images'.
         @type item: Dictionary
         @return: Inference score.
         @rtype: Dictionary

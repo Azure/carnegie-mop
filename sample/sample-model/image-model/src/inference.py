@@ -22,6 +22,28 @@ class ModelWrapper(BaseModelWrapper):
         #self.model = pickle.load(open(model_root + '/xgboost.pkl', 'rb'))
         #self.tokenizer = pickle.load(open(model_root + '/tokenizer.pkl', 'rb'))
     
+    def mock_inference(self, item: Dict) -> Dict:
+        """
+       It's a mock inference function: use your own inference logic.
+       @param item: A dictionary which have a key named 'data'.
+       @type item: Dictionary
+       @return: Inference score.
+       @rtype: Dictionary
+       """
+
+        base64_string: str = item["data"]
+        if base64_string.startswith("data:image"):
+            base64_string = base64_string.split(",", 1)[1]
+
+        image_data = base64.b64decode(base64_string)
+        image_stream = io.BytesIO(image_data)
+
+        image = Image.open(image_stream)
+        width, height = image.size
+
+        image_format = image.format
+        return {"width": width, "height": height, "format": image_format}
+        
     def inference(self, item: Dict) -> Dict:
         """
         Model Inference
@@ -30,18 +52,7 @@ class ModelWrapper(BaseModelWrapper):
         @return: Inference score.
         @rtype: Dictionary
         """
-        base64_string: str = item["data"]
-        if base64_string.startswith("data:image"):
-            base64_string = base64_string.split(",", 1)[1]
-        
-        image_data = base64.b64decode(base64_string)
-        image_stream = io.BytesIO(image_data)
-        
-        image = Image.open(image_stream)
-        width, height = image.size
-        
-        image_format = image.format
-        return {"width": width, "height": height, "format": image_format}
+        return self.mock_inference(item)
     
     def inference_batch(self, items: List[Dict]) -> List[Dict]:
         return [self.inference(i) for i in items]
@@ -51,6 +62,18 @@ class ModelWrapper(BaseModelWrapper):
         return {"data": image_base64}
     
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
+        """
+        Example function to convert model output to mop-utils output.
+        Parameters
+        ----------
+        customized_output : your model inference output. It's a dictionary.
+        kwargs : other keyword parameters may use by mop-utils
+
+        Returns
+        -------
+        MopInferenceOutput: mop-utils inference output.
+
+        """
         width = customized_output["width"]
         height = customized_output["height"]
         image_format = customized_output["format"]
