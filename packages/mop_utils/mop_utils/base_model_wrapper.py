@@ -74,6 +74,17 @@ class MopInferenceInput:
 class MopInferenceOutput:
     """
     MopInferenceOutput: output example:
+    
+    The key name below for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2', 'severity-3'
+    or 'sev-1', 'sev-2', 'sev-3' is just for sample, please write your own key names relevant to your model,
+    the key names are variable by your model.
+    
+    The key value below for taxonomy 'violence' and 'hate', for example value for key 'severity-1' is just for sample,
+    its value will be updated by your model.
+    
+    Please make sure the key names for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2',
+    'severity-3', 'sev-1', 'sev-2', 'sev-3' must be both appear in 'predicted_labels' and 'confidence_scores' and
+    its key name is same.
     {
         "predicted_labels": {
             "violence": {
