@@ -23,11 +23,11 @@ class ModelWrapper(BaseModelWrapper):
     
     def mock_inference(self, item: Dict) -> Dict:
         """
-         It's a mock inference function: write your own inference logic.
-         @param item: A dictionary which have a key named 'images'.
-         @type item: Dictionary
-         @return: Inference score.
-         @rtype: Dictionary
+        It's a mock inference function: write your own inference logic.
+        @param item: A dictionary which have a key named 'images'.
+        @type item: Dictionary
+        @return: Inference score.
+        @rtype: Dictionary
         """
         
         images = item["images"]
@@ -67,15 +67,12 @@ class ModelWrapper(BaseModelWrapper):
     
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
         """
-         Example function to convert model output to mop-utils output. Write your own logic.
-         Parameters
-         ----------
-         customized_output : your model inference output. It's a dictionary.
-         kwargs : other keyword parameters may use by mop-utils
-
-         Returns
-         -------
-         MopInferenceOutput: mop-utils inference output.
+        Example function to convert model output to mop-utils output. Write your own logic.
+        @param customized_output : Your model inference output. It's a dictionary.
+        @type customized_output: A dictionary.
+        @param kwargs : Other necessary keyword parameters is OK.
+        @return: Mop-utils inference output
+        @rtype: MopInferenceOutput
          """
         
         width = customized_output["width"]
