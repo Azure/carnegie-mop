@@ -27,6 +27,16 @@ class ModelWrapper(BaseModelWrapper):
         @return: Inference score.
         @rtype: Dictionary
         """
+        return self.mock_inference(item)
+    
+    def mock_inference(self, item: Dict) -> Dict:
+        """
+        It's a mock inference function: write your own inference logic.
+        @param item: A dictionary which have a key named 'data'.
+        @type item: Dictionary
+        @return: Inference score.
+        @rtype: Dictionary
+        """
         features = self.tokenizer.transform([item.get('data')])
         score = self.model.predict_proba(features)[0][1]
         return {'score': score}
@@ -42,6 +52,15 @@ class ModelWrapper(BaseModelWrapper):
         return {"data": mop_input.text}
 
     def convert_model_output_to_mop_output(self, customized_output: Dict, **kwargs) -> MopInferenceOutput:
+        """
+        Example function to convert model output to mop-utils output. Write your own logic.
+        @param customized_output : Your model inference output. It's a dictionary.
+        @type customized_output: A dictionary.
+        @param kwargs : Other necessary keyword parameters.
+        @return: Mop-utils inference output
+        @rtype: MopInferenceOutput
+         """
+        
         probability = float(customized_output.get('score'))
         print(f'model probability: {probability}')
         positive = 1 if probability > 0.5 else 0
