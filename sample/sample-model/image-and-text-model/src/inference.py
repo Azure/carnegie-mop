@@ -70,7 +70,7 @@ class ModelWrapper(BaseModelWrapper):
         Example function to convert model output to mop-utils output. Write your own logic.
         @param customized_output : Your model inference output. It's a dictionary.
         @type customized_output: A dictionary.
-        @param kwargs : Other necessary keyword parameters is OK.
+        @param kwargs : Other necessary keyword parameters.
         @return: Mop-utils inference output
         @rtype: MopInferenceOutput
          """
