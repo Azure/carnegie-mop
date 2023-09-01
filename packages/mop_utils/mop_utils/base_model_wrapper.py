@@ -76,7 +76,7 @@ class MopInferenceOutput:
     MopInferenceOutput: output example:
     
     The key name below for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2', 'severity-3'
-    or 'sev-1', 'sev-2', 'sev-3' is just for sample, please write your own key names relevant to your model,
+    or 'sev-1', 'sev-2', 'sev-3' is just for example, please write your own key names relevant to your model,
     the key names are variable by your model.
     
     The key value below for taxonomy 'violence' and 'hate', for example value for key 'severity-1' is just for sample,
@@ -85,16 +85,55 @@ class MopInferenceOutput:
     Please make sure the key names for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2',
     'severity-3', 'sev-1', 'sev-2', 'sev-3' must be both appear in 'predicted_labels' and 'confidence_scores' and
     its key name is same.
+    
+    1, For categorical task:
+    Value 1 only appears once in predicted_labels,  and its key name should both appear in model label and task label.
+    
+    For example:
+    
     {
         "predicted_labels": {
             "violence": {
-                "severity-1": 1,
+                "severity-1": 0,
                 "severity-2": 0,
-                "severity-3": 0
+                "severity-3": 1
             },
             "hate": {
                 "sev-1": 0,
                 "sev-2": 0,
+                "sev-3": 1
+            }
+        },
+        "confidence_scores": {
+            "violence": {
+                "severity-1": 0.525,
+                "severity-2": 0,
+                "severity-3": 0.5485
+            },
+            "hate": {
+                "sev-1": 0.225,
+                "sev-2": 0.225,
+                "sev-3": 0.26544
+            }
+        }
+    }
+    
+    2, For ordinal task:
+    Value 1 must in model predicted_labels, and if 1 appears in model response predicted_labels,
+    then all other values after this 1 will be also 1.
+    
+    For example:
+    
+    {
+        "predicted_labels": {
+            "violence": {
+                "severity-1": 1,
+                "severity-2": 1,
+                "severity-3": 1
+            },
+            "hate": {
+                "sev-1": 1,
+                "sev-2": 1,
                 "sev-3": 1
             }
         },
