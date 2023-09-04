@@ -73,83 +73,7 @@ class MopInferenceInput:
 
 class MopInferenceOutput:
     """
-    MopInferenceOutput: output example:
-    
-    The key name below for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2', 'severity-3'
-    or 'sev-1', 'sev-2', 'sev-3' is just for example, please write your own key names relevant to your model,
-    the key names are variable by your model.
-    
-    The key value below for taxonomy 'violence' and 'hate', for example value for key 'severity-1' is just for sample,
-    its value will be updated by your model.
-    
-    Please make sure the key names for taxonomy 'violence' and 'hate', for example 'severity-1', 'severity-2',
-    'severity-3', 'sev-1', 'sev-2', 'sev-3' must be both appear in 'predicted_labels' and 'confidence_scores' and
-    its key name is same.
-    
-    1, For categorical task:
-    Value 1 only appears once in predicted_labels,  and its key name should both appear in model label and task label.
-    
-    For example:
-    
-    {
-        "predicted_labels": {
-            "violence": {
-                "severity-1": 0,
-                "severity-2": 0,
-                "severity-3": 1
-            },
-            "hate": {
-                "sev-1": 0,
-                "sev-2": 0,
-                "sev-3": 1
-            }
-        },
-        "confidence_scores": {
-            "violence": {
-                "severity-1": 0.525,
-                "severity-2": 0,
-                "severity-3": 0.5485
-            },
-            "hate": {
-                "sev-1": 0.225,
-                "sev-2": 0.225,
-                "sev-3": 0.26544
-            }
-        }
-    }
-    
-    2, For ordinal task:
-    Value 1 must in model predicted_labels, and if 1 appears in model response predicted_labels,
-    then all other values after this 1 will be also 1.
-    
-    For example:
-    
-    {
-        "predicted_labels": {
-            "violence": {
-                "severity-1": 1,
-                "severity-2": 1,
-                "severity-3": 1
-            },
-            "hate": {
-                "sev-1": 1,
-                "sev-2": 1,
-                "sev-3": 1
-            }
-        },
-        "confidence_scores": {
-            "violence": {
-                "severity-1": 0.525,
-                "severity-2": 0,
-                "severity-3": 0.5485
-            },
-            "hate": {
-                "sev-1": 0.225,
-                "sev-2": 0.225,
-                "sev-3": 0.26544
-            }
-        }
-    }
+    Mop-utils inference output.
     """
     
     def __init__(self, raw_data_dict: dict) -> None:
@@ -157,7 +81,81 @@ class MopInferenceOutput:
         Initialize MopInferenceOutput.
         @param raw_data_dict: raw data dictionary.
         @type raw_data_dict: A dictionary which have two keys: "predicted_labels" and "confidence_scores".
-                           Refer the class output example above.
+                             Refer example below:
+                           
+        The label names for each taxonomy can be defined based on the specific model.
+        To be considered valid MopInferenceOutput, they must meet the following requirements:
+        
+        1. The key names 'predicted_labels' and 'confidence_scores' are required, and the label names
+        corresponding to the same taxonomy in both must be identical.
+        
+        2. When the label type is categorical, there must be at least two label names for each taxonomy,
+        Among these labels, only one should have a value of 1, while the rest should be set to 0.
+        Additionally, this label name, which has a value of 1, must appear in both the model label and
+        the task label to ensure consistency and accuracy.
+        
+        
+        When dealing with ordinal label types, it's important to note that each taxonomy should consist of a minimum
+        of three label names. These labels should be organized in ascending order. Specifically, within each taxonomy
+        listed under 'predicted_labels', if the value 1 appears, then all subsequent values should also be set to 1 to
+        accurately represent the ordinal nature of the labels.
+
+        For example:
+        If the task is categorical, the label names and values for each taxonomy can be defined as follows:
+        {
+            "predicted_labels": {
+                "violence": {
+                    "severity-1": 0,
+                    "severity-2": 0,
+                    "severity-3": 1
+                },
+                "hate": {
+                    "sev-1": 0,
+                    "sev-2": 0,
+                    "sev-3": 1
+                }
+            },
+            "confidence_scores": {
+                "violence": {
+                    "severity-1": 0.525,
+                    "severity-2": 0,
+                    "severity-3": 0.5485
+                },
+                "hate": {
+                    "sev-1": 0.225,
+                    "sev-2": 0.225,
+                    "sev-3": 0.26544
+                }
+            }
+        }
+
+        If the task is ordinal, the label names and values for each taxonomy can be defined as follows:
+        {
+            "predicted_labels": {
+                "violence": {
+                    "severity-1": 0,
+                    "severity-2": 1,
+                    "severity-3": 1
+                },
+                "hate": {
+                    "sev-1": 0,
+                    "sev-2": 0,
+                    "sev-3": 1
+                }
+            },
+            "confidence_scores": {
+                "violence": {
+                    "severity-1": 0.525,
+                    "severity-2": 0,
+                    "severity-3": 0.5485
+                },
+                "hate": {
+                    "sev-1": 0.225,
+                    "sev-2": 0.225,
+                    "sev-3": 0.26544
+                }
+            }
+        }
         """
         self.predicted_labels = raw_data_dict.get("predicted_labels", None)
         self.confidence_scores = raw_data_dict.get("confidence_scores", None)
