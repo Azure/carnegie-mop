@@ -90,23 +90,18 @@ class MopInferenceOutput:
         
         2. When the label type is categorical, there must be at least two label names for each taxonomy.
         Among these labels, only one should have a value of 1, while the rest should be set to 0.
-        Additionally, this label name which has a value of 1 must appear in both the model label and
-        the task label to ensure consistency and accuracy.
         
-        
-        When dealing with ordinal label types, it's important to note that each taxonomy should consist of a minimum
-        of three label names. These labels should be organized in ascending order. Specifically, within each taxonomy
-        listed under 'predicted_labels', if the value 1 appears, then all subsequent values should also be set to 1 to
-        accurately represent the ordinal nature of the labels.
+        When dealing with ordinal label type, it's important to note that each taxonomy should consist of a minimum
+        of three label names. These labels should be organized in ascending order.
 
         For example:
-        If the task is categorical, the label names and values for each taxonomy can be defined as follows:
+        If the label type is categorical, the names and values of label for each taxonomy can be defined as follows:
         {
             "predicted_labels": {
                 "violence": {
                     "severity-1": 0,
-                    "severity-2": 0,
-                    "severity-3": 1
+                    "severity-2": 1,
+                    "severity-3": 0
                 },
                 "hate": {
                     "sev-1": 0,
@@ -117,8 +112,8 @@ class MopInferenceOutput:
             "confidence_scores": {
                 "violence": {
                     "severity-1": 0.525,
-                    "severity-2": 0,
-                    "severity-3": 0.5485
+                    "severity-2": 0.5485,
+                    "severity-3": 0
                 },
                 "hate": {
                     "sev-1": 0.225,
@@ -128,7 +123,7 @@ class MopInferenceOutput:
             }
         }
 
-        If the task is ordinal, the label names and values for each taxonomy can be defined as follows:
+        If the label type is ordinal, the names and values of label for each taxonomy can be defined as follows:
         {
             "predicted_labels": {
                 "violence": {
@@ -144,8 +139,8 @@ class MopInferenceOutput:
             },
             "confidence_scores": {
                 "violence": {
-                    "severity-1": 0.525,
-                    "severity-2": 0,
+                    "severity-1": 0,
+                    "severity-2": 0.525,
                     "severity-3": 0.5485
                 },
                 "hate": {
