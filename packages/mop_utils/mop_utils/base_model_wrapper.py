@@ -80,18 +80,17 @@ class MopInferenceOutput:
         """
         Initialize MopInferenceOutput.
         @param raw_data_dict: raw data dictionary.
-        @type raw_data_dict: A dictionary which have two keys: "predicted_labels" and "confidence_scores".
-                             Refer example below:
-                           
+        @type raw_data_dict: A dictionary which has two keys: "predicted_labels" and "confidence_scores".
+        
         The label names for each taxonomy can be defined based on the specific model.
         To be considered valid MopInferenceOutput, they must meet the following requirements:
         
         1. The key names 'predicted_labels' and 'confidence_scores' are required, and the label names
         corresponding to the same taxonomy in both must be identical.
         
-        2. When the label type is categorical, there must be at least two label names for each taxonomy,
+        2. When the label type is categorical, there must be at least two label names for each taxonomy.
         Among these labels, only one should have a value of 1, while the rest should be set to 0.
-        Additionally, this label name, which has a value of 1, must appear in both the model label and
+        Additionally, this label name which has a value of 1 must appear in both the model label and
         the task label to ensure consistency and accuracy.
         
         
