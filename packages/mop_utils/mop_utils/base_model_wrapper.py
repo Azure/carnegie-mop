@@ -83,7 +83,7 @@ class MopInferenceOutput:
         @type raw_data_dict: A dictionary which has two keys: "predicted_labels" and "confidence_scores".
         
         The label names for each taxonomy can be defined based on the specific model.
-        To be considered valid MopInferenceOutput, they must meet the following requirements:
+        In order to be deemed a valid MopInferenceOutput, certain requirements must be met:
         
         1. The key names 'predicted_labels' and 'confidence_scores' are required, and the label names
         corresponding to the same taxonomy in both must be identical.
@@ -92,8 +92,9 @@ class MopInferenceOutput:
         Among these labels, only one should have a value of 1, while the rest should be set to 0.
         
         When dealing with ordinal label type, it's important to note that each taxonomy should consist of a minimum
-        of three label names. These labels should be organized in ascending order.
-
+        of three label names. These labels should be organized in ascending order based on their VALUES, rather than
+        the sequence information of the label itself.
+        
         For example:
         If the label type is categorical, the names and values of label for each taxonomy can be defined as follows:
         {
@@ -127,14 +128,14 @@ class MopInferenceOutput:
         {
             "predicted_labels": {
                 "violence": {
-                    "severity-1": 0,
+                    "severity-1": 1,
                     "severity-2": 1,
-                    "severity-3": 1
+                    "severity-3": 0
                 },
                 "hate": {
-                    "sev-1": 0,
+                    "sev-1": 1,
                     "sev-2": 0,
-                    "sev-3": 1
+                    "sev-3": 0
                 }
             },
             "confidence_scores": {
