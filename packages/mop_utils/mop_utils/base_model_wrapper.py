@@ -72,9 +72,6 @@ class MopInferenceInput:
 
 
 class MopInferenceOutput:
-    """
-    Mop-utils inference output.
-    """
     
     def __init__(self, raw_data_dict: dict) -> None:
         """
@@ -90,8 +87,8 @@ class MopInferenceOutput:
         Among these labels, only one should have a value of 1, while the rest should be set to 0.
         
         When dealing with ordinal label type, it's important to note that each taxonomy should consist of a minimum
-        of three label names. These labels should be organized in ascending order based on their VALUES, rather than
-        the sequence information of the label itself.
+        of three label names. These labels should be organized in ascending order based on the sequence information
+        of the label itself, rather than their position in the dictionary.
         
         For example:
         If the label type is categorical, the names and values of label for each taxonomy can be defined as follows:
@@ -138,14 +135,14 @@ class MopInferenceOutput:
             },
             "confidence_scores": {
                 "violence": {
-                    "severity-1": 0,
-                    "severity-2": 0.525,
-                    "severity-3": 0.5485
+                    "severity-1": 0.5485,
+                    "severity-2": 1.023,
+                    "severity-3": 0
                 },
                 "hate": {
-                    "sev-1": 0.225,
+                    "sev-1": 0.26544,
                     "sev-2": 0.225,
-                    "sev-3": 0.26544
+                    "sev-3": 0.225
                 }
             }
         }
