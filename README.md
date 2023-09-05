@@ -167,7 +167,15 @@ For an ordinal task, as labels are in **ascending** order (the specific order sh
 - Precision: tp / (tp + fp)
 - Recall: tp / (tp + fn)
 - F1_score: 2 * (precision * recall) / (precision + recall)
+- Accuracy: (tp + tn) / total_sample_count
 - Averaging methods: macro-average, micro-average, weighted-average
+
+### Q: What metrics does MOP use for load test?
+A:  MOP provides RPS, latency, request count and infrastructure utilization percentage via charts.
+- Actual RPS: The actual (successful) RPS that the model can handle under different settings (target RPS or concurrency).
+- Latency: The latency of the model under different settings (target RPS or concurrency). For each setting (target RPS or concurrency, MOP runs for a certain period of time (e.g. 5 minutes) and collects the latency of each request. Then MOP sorts the latencies from low to high and calculates the 50th, 90th, 95th and 99th percentile values (P50, P90, P95, P99). Average latency is also calculated among all successful requests.
+- Total Request Count: For each setting (target RPS or concurrency), MOP runs for a certain period of time (e.g. 5 minutes) and collects the total request count. The total request count is the sum of all successful requests and failed requests. Successful requests are requests that return HTTP status code 200. User Failed requests are requests that return HTTP status code 4xx. System Failed requests are requests that return HTTP status code 5xx.
+- Resource Utilization Percentage: For each setting (target RPS or concurrency), MOP runs for a certain period of time (e.g. 5 minutes) and collects the resource utilization percentage. The resource utilization percentage is the **percentage** of the resource, such as CPU time, memory, disk space, GPU time and GPU memory (if available), that is used by the model during the load test. For example, if the model uses 50% of the CPU time during the load test, the CPU utilization percentage is 50%.
 
 <!--
 ### Q: How to calculate the average rank percentile of a metric?

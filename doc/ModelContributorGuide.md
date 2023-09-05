@@ -56,6 +56,7 @@ This folder contains the scripts and configuration files that are required to ru
     - `inference`: Run the model evaluation for a single input.
     - `inference_batch`: Run the model evaluation for a batch of inputs.
     - `convert_model_output_to_mop_output`: Convert the model output to MOP output. **Note that the label in the output should be the same as the labels in the tasks that your model connect to [later](./ModelContributorGuide.md#create-a-model).**
+      > please refer [this section](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types) for the model output format.
     - `convert_mop_input_to_model_input`: Convert the MOP input to model input.
     - `convert_acs_text_request_to_model_inference_input`: (optional) Convert the ACS text request to model inference input.
     - `convert_model_inference_output_to_acs_text_response`: (optional) Convert the model inference output to ACS text response.
@@ -107,7 +108,7 @@ Fill in the form  in the pop-up window:
   2. Enter the corresponding name for the selected taxonomy in your model output so that MOP can parse the model output.
   3. Choose a task in the dropdown list. Note that tasks can be different in modalities (i.e. text, image, video, .etc). You need to choose the right task with the right modality.
   4. Add more tasks if needed following steps i-iii.
-  > please refer [this](https://github.com/Azure/carnegie-mop#q-what-is-the-difference-between-the-load-test-perrps-and-load-test-perconcurrency)
+  > please refer [this section](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types) for the model output format.
 * **Enable regression test**: MOP will store DSAT cases from (downstream service's) users. These cases are valuable for model quality evaluation and improvement. Each DSAT case will be connected to a task. If you choose to enable regression test, MOP will run the model evaluation against these DSAT cases and report the model performance per task. **It cannot be changed once the model is created.**
   > Only models with regression results can be used for model release.
 
