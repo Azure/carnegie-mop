@@ -107,14 +107,14 @@ class MopInferenceOutput:
             },
             "confidence_scores": {
                 "violence": {
-                    "severity-1": 0.525,
-                    "severity-2": 0.5485,
+                    "severity-1": 0.325,
+                    "severity-2": 0.675,
                     "severity-3": 0
                 },
                 "hate": {
-                    "sev-1": 0.225,
-                    "sev-2": 0.225,
-                    "sev-3": 0.26544
+                    "sev-1": 0.125,
+                    "sev-2": 0.325,
+                    "sev-3": 0.55
                 }
             }
         }
