@@ -79,8 +79,6 @@ class MopInferenceOutput:
     def __init__(self, raw_data_dict: dict) -> None:
         """
         Initialize MopInferenceOutput.
-        @param raw_data_dict: raw data dictionary.
-        @type raw_data_dict: A dictionary which has two keys: "predicted_labels" and "confidence_scores".
         
         The label names for each taxonomy can be defined based on the specific model.
         In order to be deemed a valid MopInferenceOutput, certain requirements must be met:
