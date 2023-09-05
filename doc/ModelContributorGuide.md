@@ -107,10 +107,11 @@ Fill in the form  in the pop-up window:
   2. Enter the corresponding name for the selected taxonomy in your model output so that MOP can parse the model output.
   3. Choose a task in the dropdown list. Note that tasks can be different in modalities (i.e. text, image, video, .etc). You need to choose the right task with the right modality.
   4. Add more tasks if needed following steps i-iii.
+  > please refer [this](https://github.com/Azure/carnegie-mop#q-what-is-the-difference-between-the-load-test-perrps-and-load-test-perconcurrency)
 * **Enable regression test**: MOP will store DSAT cases from (downstream service's) users. These cases are valuable for model quality evaluation and improvement. Each DSAT case will be connected to a task. If you choose to enable regression test, MOP will run the model evaluation against these DSAT cases and report the model performance per task. **It cannot be changed once the model is created.**
   > Only models with regression results can be used for model release.
 
-* **Load test option**: MOP provides two different strategies for load test: adjusting the connection number from client side and adjusting the request per second sent from client side. You can choose one of them based on your requirement. See [Load Test difference](../README.md:157) for more details.
+* **Load test option**: MOP provides two different strategies for load test: adjusting the connection number from client side and adjusting the request per second sent from client side. You can choose one of them based on your requirement. See [Load Test difference](https://github.com/Azure/carnegie-mop#q-what-is-the-difference-between-the-load-test-perrps-and-load-test-perconcurrency) for more details.
   
   As for the payload, MOP will use maximum payload for testing, and it cannot be changed, so that the model can be tested with the worst case and the results for different models can be compared. Payload details are different per modality:
     - Text: a piece of text with about 1000 characters.

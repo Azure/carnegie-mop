@@ -80,6 +80,89 @@ If you are a downstream responsible AI service admin and want to use MOP to trac
 If you want to go through model testing results in general, please refer to [Model Testing Results Guide](./doc/ModelTestingResults.md).
 
 ## FAQ
+
+### Q: What format does a model output should be for different task label types?
+A: There are two label types for task on MOP: categorical and ordinal. The output of a model consist of two parts for each label: the label value and the confidence score ((probability). 
+
+For a categorical task, each label should be independent and mutually exclusive. Therefore, in the predicted_labels field, **there should one and only one label that has 1 as its predicted labels for each taxonomy, and the sum of all confidence scores of a taxonomy should be 1.** 
+<details>
+  <summary>Here is an example for a valid model output (for categorical task) in Json format</summary>
+
+  ```
+{
+    "predicted_labels": {
+        "hate": {
+            "0": 0,
+            "2": 0,
+            "4": 1,
+            "6": 0
+        },
+        "violence": {
+            "0": 0,
+            "2": 0,
+            "4": 0,
+            "6": 1
+        }
+    },
+    "confidence_scores": {
+        "hate": {
+            "0": 0.1,
+            "2": 0.1,
+            "4": 0.8,
+            "6": 0
+        },
+        "violence": {
+            "0": 0.05,
+            "2": 0.1,
+            "4": 0.05,
+            "6": 0.8
+        }
+    }
+}
+  ```
+
+</details>
+
+For an ordinal task, as labels are in **ascending** order (the specific order should refer to the task that this model will connect to on MOP), MOP assumes that if the predicted_label of a task label is `1`, it means the input sample can be classified as this label or any label that has a larger values. For example, if an ordinal task label is "low", "medium", "medium-high", "high", and the predicted_label for "medium" is `1`, it means the input sample can be classified as "medium", "medium-high" or "high". Therefore, in the predicted_labels field, **labels before 'medium' (included) should all have 1 as their predicted labels, and labels after 'medium' should all have 0 as their predicted labels; confidence score for each label should be cumulative.**
+
+<details>
+  <summary>Here is an example for a valid model output (for ordinal task) in Json format</summary>
+
+  ```
+{
+    "predicted_labels": {
+        "hate": {
+            "0": 1,
+            "2": 1,
+            "4": 1,
+            "6": 0
+        },
+        "violence": {
+            "0": 1,
+            "2": 0,
+            "4": 0,
+            "6": 0
+        }
+    },
+    "confidence_scores": {
+        "hate": {
+            "0": 1.0,
+            "2": 0.8,
+            "4": 0.6,
+            "6": 0.1
+        },
+        "violence": {
+            "0": 1.0,
+            "2": 0.43,
+            "4": 0.05,
+            "6": 0.005
+        }
+    }
+}
+  ```
+
+</details>
+
 ### Q: What metrics does MOP use for model evaluation?
 - Precision: tp / (tp + fp)
 - Recall: tp / (tp + fn)
@@ -144,7 +227,7 @@ A model owner can go to `Models -> Your Model -> Evaluation by datasets`, choose
 and select `Public evaluation result` to publish them.
 
 If you are the model owner, and you cannot see the expected evaluation results, please contact us via
-**[Teams Channel](https://teams.microsoft.com/l/channel/19%3aff909a78aec9400198fd23ff2f870b7b%40thread.tacv2/User%2520Support%2520and%2520Feedback?groupId=65192cc8-6d82-48d6-8fb7-109cf913f4f9&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
+**[Teams Channel](https://teams.microsoft.com/l/channel/19%3a1084123e5ecb4bb78c73180635912325%40thread.tacv2/MOP%2520-%2520Model%2520Onboarding%2520Pipeline?groupId=53a49c8d-3238-44df-93a6-eca78bf3d51f&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)**.
 
 ### Q: Why do I fail to install mop-utils package?
 The package mop-utils depends on python which version is no lower than 3.8.
