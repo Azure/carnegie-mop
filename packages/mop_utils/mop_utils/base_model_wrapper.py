@@ -136,7 +136,7 @@ class MopInferenceOutput:
             "confidence_scores": {
                 "violence": {
                     "severity-1": 0.5485,
-                    "severity-2": 1.023,
+                    "severity-2": 0.525,
                     "severity-3": 0
                 },
                 "hate": {
