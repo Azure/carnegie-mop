@@ -72,42 +72,80 @@ class MopInferenceInput:
 
 
 class MopInferenceOutput:
-    """
-    MopInferenceOutput: output example:
-    {
-        "predicted_labels": {
-            "violence": {
-                "severity-1": 1,
-                "severity-2": 0,
-                "severity-3": 0
-            },
-            "hate": {
-                "sev-1": 0,
-                "sev-2": 0,
-                "sev-3": 1
-            }
-        },
-        "confidence_scores": {
-            "violence": {
-                "severity-1": 0.525,
-                "severity-2": 0,
-                "severity-3": 0.5485
-            },
-            "hate": {
-                "sev-1": 0.225,
-                "sev-2": 0.225,
-                "sev-3": 0.26544
-            }
-        }
-    }
-    """
     
     def __init__(self, raw_data_dict: dict) -> None:
         """
         Initialize MopInferenceOutput.
-        @param raw_data_dict: raw data dictionary.
-        @type raw_data_dict: A dictionary which have two keys: "predicted_labels" and "confidence_scores".
-                           Refer the class output example above.
+        
+        The label names for each taxonomy can be defined based on the specific model.
+        In order to be deemed a valid MopInferenceOutput, certain requirements must be met:
+        
+        1. The key names 'predicted_labels' and 'confidence_scores' are required, and the label names
+        corresponding to the same taxonomy in both must be identical.
+        
+        2. When the label type is categorical, there must be at least two label names for each taxonomy.
+        Among these labels, only one should have a value of 1, while the rest should be set to 0.
+        
+        When dealing with ordinal label type, it's important to note that each taxonomy should consist of a minimum
+        of three label names. These labels should be organized in ascending order based on the sequence information
+        of the label itself, rather than their position in the dictionary.
+        
+        For example:
+        If the label type is categorical, the names and values of label for each taxonomy can be defined as follows:
+        {
+            "predicted_labels": {
+                "violence": {
+                    "severity-1": 0,
+                    "severity-2": 1,
+                    "severity-3": 0
+                },
+                "hate": {
+                    "sev-1": 0,
+                    "sev-2": 0,
+                    "sev-3": 1
+                }
+            },
+            "confidence_scores": {
+                "violence": {
+                    "severity-1": 0.325,
+                    "severity-2": 0.675,
+                    "severity-3": 0
+                },
+                "hate": {
+                    "sev-1": 0.125,
+                    "sev-2": 0.325,
+                    "sev-3": 0.55
+                }
+            }
+        }
+
+        If the label type is ordinal, the names and values of label for each taxonomy can be defined as follows:
+        {
+            "predicted_labels": {
+                "violence": {
+                    "severity-1": 1,
+                    "severity-2": 1,
+                    "severity-3": 0
+                },
+                "hate": {
+                    "sev-1": 1,
+                    "sev-2": 0,
+                    "sev-3": 0
+                }
+            },
+            "confidence_scores": {
+                "violence": {
+                    "severity-1": 0.5485,
+                    "severity-2": 0.525,
+                    "severity-3": 0
+                },
+                "hate": {
+                    "sev-1": 0.26544,
+                    "sev-2": 0.225,
+                    "sev-3": 0.225
+                }
+            }
+        }
         """
         self.predicted_labels = raw_data_dict.get("predicted_labels", None)
         self.confidence_scores = raw_data_dict.get("confidence_scores", None)
