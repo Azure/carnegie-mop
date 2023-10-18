@@ -1,7 +1,7 @@
 # Model Blob
 
 ## 1. ModelRevisionEmptyModelUrlError
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```bash
 Model revision blob url cannot be none (cm_model_revision_uuid = <uuid>)
 ```

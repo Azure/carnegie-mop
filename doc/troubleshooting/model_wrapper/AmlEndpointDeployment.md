@@ -1,7 +1,7 @@
 # AML Endpoint Deployment troubleshooting
 
 ## 1. InferencingClientCallFailed
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```json
 (BadRequest) The request is invalid. Code: BadRequest Message: The request is invalid.  
 Exception Details: (InferencingClientCallFailed) {
@@ -57,7 +57,7 @@ Exception Details: (InferencingClientCallFailed) {
 - Re-onboarding or upgrade model.
 
 ## 2. UserScriptException
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```bash
 doc = doc.lower() 
 AttributeError: 'NoneType' object has no attribute 'lower' 

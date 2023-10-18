@@ -1,7 +1,7 @@
 # Environment conda troubleshooting
 
 ## 1. CondaDependencyError
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```bash
 Step 8/21 : RUN ldconfig /usr/local/cuda/lib64/stubs && conda env create -p /azureml-envs/azureml_e57c376e843ed0524af2f71285901817 -f azureml-environment-setup/mutated_conda_dependencies.yml && rm -rf "$HOME/.cache/pip" && conda clean -aqy && CONDA_ROOT_DIR=$(conda info --root) && rm -rf "$CONDA_ROOT_DIR/pkgs" && find "$CONDA_ROOT_DIR" -type d -name __pycache__ -exec rm -rf {} + && ldconfig
 ---> Running in 4de347f830e7
@@ -30,7 +30,7 @@ Run ID: cap5 failed after 3m57s. Error: failed during run, err: exit status 1
 ![img.png](images/amlBuildImageLog.png) 
 
 ## 2. CondaEnvException
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```bash
 Downloading mop_utils-1.8-py3-none-any.whl (4.4 k8) 
 0[91 mPip subprocess error: 

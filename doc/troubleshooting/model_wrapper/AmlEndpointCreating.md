@@ -1,7 +1,7 @@
 # AML Endpoint Creating troubleshooting
 
 ## 1. InferencingClientCallFailed
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```json
 (BadRequest) The request is invalid. Code: BadRequest Message: The request is invalid. Exception Details: (InferencingClientCallFailed) {
     {

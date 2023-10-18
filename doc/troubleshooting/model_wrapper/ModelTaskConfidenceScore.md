@@ -1,7 +1,7 @@
 # Model Task Confidence Score
 
 ## 1. CategoricalTaskLabelConfidenceScoreSumError
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```html
 CategoricalTaskLabelConfidenceScoreSumError: the sum of all confidence scores of a taxonomy should be 1
 score_sum: <score_sum>,
@@ -15,7 +15,7 @@ response_values: <response_values>.
 - Task label confidence score value, please refer to: [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
 
 ## 2. OrdinalTaskLabelConfidenceScoreValueError
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```html
 OrdinalTaskLabelConfidenceScoreValueError: confidence score for each label should be cumulative.
 error_info: <score_cumulative>, 

@@ -1,7 +1,7 @@
 # Model Taxonomy
 
 ## 1. TaxonomyMisMatchError
-### simple details description may like below:
+### A simplified description might resemble the following:
 ```html
 Taxonomy=<taxonomy> not returned. model_revision_uuid = <model_revision_uuid>
 ```
