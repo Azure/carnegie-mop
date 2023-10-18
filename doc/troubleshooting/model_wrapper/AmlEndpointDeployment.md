@@ -42,19 +42,19 @@ Exception Details: (InferencingClientCallFailed) {
 }
 ```
 
-### Take action:
-- Check AML deployment log:   
-    Open AML deployment log, and search error to find its details error, and take relative action like below:  
+### Take appropriate action:
+- Review the AML deployment log:
+    Access the AML deployment log, search for errors, and examine the detailed error information. Take appropriate actions as outlined below: 
     ![img.png](images/searchDeploymentLog.png)
  
-- Check AML environment log:  
-    Open AML environment page, open 'Details' tab to see model environment details information, or open "Build log" tab to see environment build log.
+- Examine the AML environment log:
+    Navigate to the AML environment page and open the 'Details' tab to access detailed model environment information, or refer to the "Build log" tab to review environment build logs.
    ![img.png](images/amlEnvironmentLog.png) 
  
-- Check instance(CPU/GPU) quota limitation exceed or not, and delete useless model.  
+- Verify if CPU/GPU instance quotas have been exceeded, and remove any redundant models.  
    ![](images/deleteUselessModel.png) 
     
-- Re-onboarding or upgrade model.
+- Consider re-onboarding or upgrading the model.
 
 ## 2. UserScriptException
 ### A simplified description might resemble the following:
@@ -72,5 +72,5 @@ inference server http.server.userscrit.UserScritExcetion: Caught an unhandled ex
 ```
 ![](images/UserScriptException.png)
 
-### Take action:
-- Check your deployment log on portal **"Logs->Details"** for more info and then search keyword **"error/fail"** to see error details and then change your **inference.py** codes in your model to fix bug which cause AML endpoint deployment failed, and then re-onboarding model or upgrade model.
+### Take appropriate action:
+- Examine your deployment log on the portal under **"Logs -> Details"** for more information. Search for the keyword **"error/fail"** to locate error details, and subsequently make necessary code changes in your **inference.py** to resolve the issue causing the AML endpoint deployment failure. Following this, consider re-onboarding or upgrading the model.

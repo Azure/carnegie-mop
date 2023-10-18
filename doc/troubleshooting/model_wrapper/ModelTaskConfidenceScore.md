@@ -10,9 +10,9 @@ task_label_info: <task_label_info>,
 model_revision_uuid: <model_revision_uuid>, 
 response_values: <response_values>.
 ```
-### Take action:
-- Check task label confidence score value.
-- Task label confidence score value, please refer to: [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
+### Take appropriate action:
+- Verify the confidence score value for the task label.
+- For details on the task label confidence score value, please consult: [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
 
 ## 2. OrdinalTaskLabelConfidenceScoreValueError
 ### A simplified description might resemble the following:
@@ -25,7 +25,7 @@ model_revision_uuid: <model_revision_uuid>,
 response_values: <response_values>"
 ```
 
-### Take action:
-- Check task label confidence score value.
-- Task label confidence score value, please refer to: [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
+### Take appropriate action:
+- Verify the confidence score value for the task label.
+- For details on the task label confidence score value, please consult: [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
 

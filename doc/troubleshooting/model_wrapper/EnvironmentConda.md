@@ -24,9 +24,10 @@ failed to run step ID: acb_step_0: exit status 1
 Run ID: cap5 failed after 3m57s. Error: failed during run, err: exit status 1
 ```
 
-### Take action:
-- Check if Docker image has issue or not. If so, use another Docker image and retry onboarding model or upgrade model.
-- Check AML image build log to see if encountered error or not: open <uuid>.txt to see details.
+### Take appropriate action:
+- Verify whether there are issues with the Docker image. If issues are found, utilize an alternative Docker image and then attempt to re-onboard or upgrade the model.
+
+- Examine the AML image build log to determine if any errors were encountered. Open the <uuid>.txt file to access detailed information.
 ![img.png](images/amlBuildImageLog.png) 
 
 ## 2. CondaEnvException
@@ -43,15 +44,17 @@ Run ID: ca3b6 failed after 2m19s. Error. failed during run, err: exit status 1
 ev 1 / 6 Next) 
 ```
 
-### Take action:
-- Check AML deployment log:   
-    Open AML deployment log, and search error to find its details error, and take relative action like below:  
+### Take appropriate action:
+- Examine the AML deployment log:
+    Open the AML deployment log, search for errors to find detailed error information, and take appropriate actions as outlined below:
     ![img.png](images/searchDeploymentLog.png)
  
-- Check AML image build log to see if encountered error or not: open <uuid>.txt to see details.
+- Verify the AML image build log for errors:
+    Open the <uuid>.txt file to access detailed information about encountered errors.
 ![img.png](images/amlBuildImageLog.png)  
  
-- Check AML image build log for details:   
+- Review the AML image build log for comprehensive details:
    Refer to [Image build failure](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-troubleshoot-online-endpoints?view=azureml-api-2&tabs=python#error-imagebuildfailure)  
-- Re-onboarding or upgrade model.
+ 
+- Consider re-onboarding or upgrading the model.
 

@@ -5,9 +5,7 @@
 ```html
 Taxonomy=<taxonomy> not returned. model_revision_uuid = <model_revision_uuid>
 ```
-### Take action:
-- Check if taxonomy match taxonomies response:
-For example: Taxonomy need match identity_hate in API /score response.
-
-Taxonomy mapping may look as below:  
+### Take appropriate action:
+- Ensure that the taxonomy matches the taxonomies in the response. For instance, the taxonomy should match 'identity_hate' in the API '/score' response.  
+    - The example sentence emphasizes the specific matching requirement. The taxonomy mapping may appear as follows:  
 ![img.png](images/TaxonomyMisMatchError.png)

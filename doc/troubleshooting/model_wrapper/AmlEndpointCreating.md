@@ -41,11 +41,11 @@
 }
 ```
 
-### Take action:
-- Check AML online endpoint log to see if error within and according to the error take relevant action.
+### Take appropriate action:
+- Examine the AML online endpoint logs to identify any errors, and then take appropriate actions based on the error.
 ![img.png](images/searchDeploymentLog.png)
  
-- Check instance(CPU/GPU) quota limitation exceed or not, and delete useless model.  
+- Verify whether the instance (CPU/GPU) quota has been exceeded, and remove any unnecessary models.  
    ![](images/deleteUselessModel.png) 
-- Check if you need remove role assignment or not.
-- Re-onboarding model or upgrade model.
+- Assess if it's necessary to remove role assignments.
+- Consider re-onboarding or upgrading the model.

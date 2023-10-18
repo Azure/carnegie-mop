@@ -13,9 +13,9 @@ model_revision_uuid: <model_revision_uuid>,
 response_values: <response_values>.
 ```
 
-### Take action:
-- Check task label and its value rule.  
-- Task label and value rule refers to:   
+### Take appropriate action:
+- Review the task label and its corresponding value rule.  
+- For reference to the task label and value rule, please consult:   
 [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
 
 
@@ -29,7 +29,7 @@ task_label_info: <task_label_info>,
 model_revision_uuid: <model_revision_uuid>,
 response_values: <response_values>
 ```
-### Take action:
-- Check task label and its value rule.
-- Task label and value rule refers to:   
+### Take appropriate action:
+- Review the task label and its corresponding value rule.  
+- For reference to the task label and value rule, please consult:   
 [What format does a model output should be for different task label types?](https://github.com/Azure/carnegie-mop#q-what-format-does-a-model-output-should-be-for-different-task-label-types)
