@@ -8,7 +8,7 @@ setup(
     package_dir={'mop_utils': './mop_utils'},
     python_requires='>=3.8.0',
     install_requires=[
-        'pyraisdk ~= 0.3.7',
+        'pyraisdk-test >= 0.3.13',
         'PyYAML >= 6.0',
         'numpy >= 1.22.0',
     ]

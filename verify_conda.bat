@@ -18,4 +18,4 @@ if exist privatepkgs\ (
 
 pip install azureml-defaults
 pip install PyYAML
-pip install pyraisdk
+pip install pyraisdk-test
