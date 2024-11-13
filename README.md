@@ -1,6 +1,6 @@
 # RAI Model Onboarding Pipeline Documentation
 > **Note:** This document is a work in progress. Please feel free to contribute to it by submitting a pull request.
-> Any questions please contact [David Liang](mailto:liangze@microsoft.com).
+> Any questions please contact [Chunlei Wang](mailto:chuwan@microsoft.com).
 
 ## Overview
 - MOP link (AAD required): **[https://carnegie-mop.azurewebsites.net](https://carnegie-mop.azurewebsites.net)**
