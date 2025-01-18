@@ -10,6 +10,11 @@ from pyraisdk.dynbatch import BaseModel, DynamicBatchModel
 
 inference_module = importlib.import_module(CM_MODEL_WRAPPER_NAME)
 
+# what does this section do?
+# for any class that is defined in inference.py that is child or grandchild of BaseModelWrapper, it will be added to wrappers? 
+# Isnt it better to have models to explicitly declare itself or multiple instances of models on their own? 
+# current design seems to be limiting to only model/models defined in inference.py file.
+# if someone wants to have 20 models, and if we force each of them to be defined in inference.py, that file is not going to be readable.
 wrappers = []
 for i in inference_module.__dict__.keys():
     if hasattr(inference_module.__dict__.get(i), '__bases__'):
@@ -40,6 +45,7 @@ class MOPInferenceWrapper:
 
             return mop_output.output
 
+    # batch_size is not used in this function. Plus I think batch_size is in the concerns of pyraisdk's batcher implementation
     def run_batch(self, items: List[dict], triggered_by_mop: bool, batch_size: Optional[int] = None) -> List[dict]:
         if not triggered_by_mop:
             model_outputs = self.model_wrapper.inference_batch(items)
@@ -93,6 +99,8 @@ Returns:
 """
 
 
+# with the way mop_init works, I do not think it will be able to have 2 stand alone models loaded/served at the same time from the same process.
+# 1 batch_model in 1 process, means mop_utils will be batching all requests for different models through 1 batcher queue?
 def mop_init(model_root, dynamic_batch_args: None):
     global batch_model
     global batch_size
